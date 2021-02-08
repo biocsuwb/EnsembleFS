@@ -1,7 +1,7 @@
 # WebEFS: ensemble feature selection methods for analysis of molecular data
 
 ## Welcome to WebEFS-tools
-** WebEFS is tool that allows the user to: **
+**WebEFS is tool that allows the user to:**
 * filter the most informative biomarkers from molecular data generated from high-throughput microarray experiments that could be a new diagnostic/prognostic markers or therapeutic targets;
 * establish the selected parameters for predictive models, such as the best number of most informative variables/biomarkers;
 * examine the impact of correlation between informative features on the predictive power of predictive model;
