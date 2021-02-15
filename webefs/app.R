@@ -68,7 +68,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                               "MCFS-ID" = 'fs.mcfs',
                                                               "MDFS-1D" = 'fs.mdfs.1D',
                                                               "MDFS-2D" = 'fs.mdfs.2D'),
-                                               selected = 1),
+                                               selected = 'fs.utest'),
                             
                             conditionalPanel(
                                 condition = "input.methods.includes('fs.utest') ||  input.methods.includes('fs.mdfs.1D') || input.methods.includes('fs.mdfs.2D')",
@@ -81,12 +81,12 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                             "Holm" = 'holm',
                                                             "SGoF" = "SGoF",
                                                             "None" = "none"), 
-                                             selected = 12)
+                                             selected = 'fdr')
                             ),
                             
                             conditionalPanel(
                                 condition = "input.methods.includes('fs.mrmr')",
-                                numericInput("nvar", label = h4("Number of relevant variables"), value = 3),
+                                numericInput("nvar", label = h4("Number of relevant variables"), value = 10),
                                 helpText("Note: hyperparameter of MRMR,
                                          setup no more than the number of all variables")
                             ),
@@ -95,9 +95,9 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                             
                             radioButtons("cv", label = h4("Validation methods"),
                                          choices = list("3-fold cross-validation" = 'kfoldcv', "random sample (test set 30%)" = 'rsampling'), 
-                                         selected = 1, inline = TRUE),
+                                         selected = 'kfoldcv', inline = TRUE),
                             
-                            sliderInput("niter", label = h4("Number iteration"), min = 1, max = 100, value = 1),
+                            sliderInput("niter", label = h4("Number iteration"), min = 1, max = 30, value = 10),
                             
                             uiOutput("run"),
 
@@ -380,7 +380,7 @@ server <- function(session, input, output) {
         ))
     }
     
-    else if(input$nvar > ncol(data[,-input$num])){
+    else if(input$nvar > ncol(data[,-input$num]) && 'fs.mrmr' %in% input$methods){
         showModal(modalDialog(
             title = "Error in Number features for MRMR",
             "Error in Number features for MRMR methods, should not exceed the number of features"
@@ -410,8 +410,7 @@ server <- function(session, input, output) {
                        asm = c(input$methods),
                        model = c(input$methods)) 
  
-    }    
-    })
+  
     
         
     result_full <-reactive({
@@ -590,8 +589,8 @@ server <- function(session, input, output) {
         },
         contentType = "application/zip"
     )
-     
-    #}
+    }    
+    })
     })
     ############GENE INFORMATION#################################################
     output$info.load.data <- renderText({
