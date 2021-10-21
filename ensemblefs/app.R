@@ -15,36 +15,34 @@ library(gridExtra)
 library(venn)
 library(gprofiler2)
 ui <- fluidPage(theme = shinytheme("sandstone"), 
-    navbarPage("WebEFS: ensemble feature selection methods for analysis of molecular data", 
+    navbarPage("EnsembleFS: ensemble feature selection methods for analysis of molecular data", 
                tabPanel('Home',
                         mainPanel(
-                            h2('Welcome to WebEFS-tools '),
+                            h2('Welcome to  EnsembleFS '),
                             hr(),
                             div(
-                                h4("WebEFS is tool that allows the user to: "),
-                                h5('- filter the most informative biomarkers from molecular data generated from high-throughput microarray experiments
-                  that could be a new diagnostic/prognostic markers or therapeutic targets;'),
-                                h5('- establish the selected parameters for predictive models, such as the best number of most informative variables/biomarkers;'),
-                                h5('- examine the impact of correlation between informative features on the predictive power of predictive model;'),
-                                h5('- evaluate stability of biomarker sets and performance of predictive models;'),
+                                h4("EnsembleFS is tool that allows the user to: "),
+                                h5('- filter the most informative features/biomarkers from molecular data generated from high-throughput molecular biology experiments that could be new diagnostic/prognostic markers or therapeutic targets;'),
+                                h5('- establish the selected parameters for predictive models, such as the number of top N informative features;'),
+                                h5('- evaluate the stability of feature subsets and performance of predictive models;'),
                                 h5('- find information about gene collection (gene ontology, pathways, tissue specificity, miRNA targets,
-                  regulatory motif, protein complexes, disease phenotypes) in several biological databases.'),
-                                h5('It can be applied to two-class problems. WebEFS based on the several fil-ter  feature  selection  algorithms,  such  as  the  U-test,  the  Monte  Carlo  FeatureSelection  (MCFS),
-                                the  MultiDimensional  Feature  Selection  (MDFS)  and  theMinimum Redundancy Maximum Relevance (MRMR) for discovering the mostimportant  biomarkers  and  used  the  machine  learning  algorithms  to  evaluatequality  of  the  set  of  variables.
+                                regulatory motif, protein complexes, disease phenotypes) in several biological databases.'),
+                                h5('It can be applied to two-class problems. EnsembleFS is based on several filter feature selection algorithms, such as the U-test, the Monte Carlo Feature Selection (MCFS),
+                                the MultiDimensional Feature Selection (MDFS), and the Minimum Redundancy Maximum Relevance (MRMR) for discovering the most important biomarkers and used the machine learning algorithms to evaluate the quality of feature sets.
                                 Predictive models are built using the Random Forest algorithm.'),
-                                h5('The information about each of the biomarkers was obtained from the biological databases, namely Gene Ontology (molecular function, cellular component, biological process),
-                                Kyoto Encyclopedia of Genes and Genomes (pathways), Reactome (pathways), WikiPathways (pathways), Transfac (regulatory motif),
-                                miRNA targets (miRTarBase), Human  Protein  Atlas (tissue specificity),  CORUM  protein  complexes, and Human Phenotype Ontology (human  disease phenotypes).'),
+                                h5('The information about each of the biomarkers was obtained from diverse biological databases, namely the Gene Ontology (molecular function, cellular component, biological process), the Kyoto Encyclopedia of Genes and Genomes (pathways),
+                                   the Reactome (pathways), the WikiPathways (pathways), the Transfac (regulatory motif), the miRNA targets (miRTarBase), the Human Protein Atlas (tissue specificity), the CORUM protein complexes, and the Human Phenotype Ontology (human disease phenotypes).'),
                             hr(),
                             h2('Overview'),
                             img(src="Procedure2.png", align = "center",height='700px',width='1100px'),
                             h5('For details on used notation, please refer to the Help -> Terminology'),
-                            h5('For examples on how to use WebBFS-tools, please refer to the Help -> Tutorial'),
+                            h5('For examples on how to use EnsembleFS, please refer to the Help -> Tutorial'),
                             h5('For description of sample dataset, please refer to the Help -> Sample Data'),
                             hr(),
                             h4('Contact'),
                             uiOutput("home.email"),
-                            uiOutput("home.url"),
+                            uiOutput("home.url_app"),
+                            uiOutput("home.url_package"),
                             hr(),
                             h5('Developed by Pavel Hrablis, Aneta Polewko-Klim'),
                             h5('Institute of Computer Science, University of Bialystok, Bialystok, Poland'),
@@ -53,6 +51,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                )),
                tabPanel('FEATURE SELECTION',
                         sidebarPanel(
+                            textOutput('info.load.main.data'),
                             fileInput('file1', 'Load file',
                                       accept=c('text/csv', 'text/comma-separated-values,text/plain', '.csv')),
                             
@@ -124,10 +123,10 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                         sidebarPanel(
                             textOutput('info.load.data'),        
                             hr(), 
-                            h4("Parameters"),
+                            h4("Number of relevant biomarkers"),
                             hr(),
                             sliderInput("geneNumber",
-                                        label = "Number of top N biomarkers",
+                                        label = "Top N variables with FS filter",
                                         min = 1, max = 100 , value = 100),
                                         #choices = list(5,10,15,20,30,40,50,75,100), selected = 100),
                             helpText("Note: biomarkers are analyzed that occur in at least half of the feature subsets"),
@@ -168,21 +167,22 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                         tabsetPanel(
                             type = "tabs",
                             tabPanel('Terminology',
-                                     h2('Feature selection algorithm'),
+                                     h2('Feature selection algorithms'),
                                      h4('U-test'),
-                                     h5('The U-test is a nonparametric statistical test that assigns probability to the hypothesis that two samples corresponding'),
+                                     h5('The U-test is a nonparametric statistical test that assigns a probability to the hypothesis that two samples corresponding'),
                                      h5('to two decision classes (e.g. normal and tumor tissue) are drawn from populations with the same average value.'),
                                      h4('MDFS'),
-                                     h5('MDFS method measures decrease of the information entropy of the decision variable due to knowledge of k-dimensional tuples of variables'),
-                                     h5('and measures influence of each variable in the tuple. It performs an exhaustive search over all possible k-tuples and assigns to each'),
-                                     h5('variable a maximal information gain due to given variable that was achieved in any of the k-tuple that included this variable. '),
+                                     h5('MDFS method measures the decrease of the information entropy of the decision variable due to knowledge of k-dimensional tuples of variables'),
+                                     h5('and measures the influence of each variable in the tuple. It performs an exhaustive search over all possible k-tuples and assigns to each'),
+                                     h5('variable a maximal information gain due to a given variable that was achieved in any of the k-tuple that included this variable.'),
                                      h5('MDFS-1D is one-dimensional version of this algorithm. MDFS-2D is two-dimensional version of this algorithm.'),
                                      uiOutput("url.MDFS"),
                                      h4('MCFS-IG'),
                                      h5('Monte Carlo Feature Selection and Interdependency Discovery is a Monte Carlo method-based tool for feature selection.'),
                                      uiOutput("url.MCFS"),
                                      h4('MRMR'),
-                                     h5('Minimum redundancy maximum relevance feature selection.'),
+                                     h5('Minimum redundancy maximum relevance feature selection. It selects the features which have minimal redundancy with the selected features'),
+                                     h5('and maximal relevance with the class label. For more information, see DOI: 10.1142/S0219720005001004'),
                                      uiOutput("url.MRMR"),
                                      h2('Classifier'),
                                      h4('Random Forest'),
@@ -204,11 +204,12 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                      h5('The  total  stability  of  feature selection method  is  measured  as  the  average  of  the  pairwise  similarity  for  all  pairs'),
                                      h5('of the most informative feature subsets from n runs of a model.'),
                                      h4('ASM'),
+                                     h5('Lustgarten adjusted stability measure.'),
                                      uiOutput("url.Lustgarten")
                             ),
                             tabPanel('Tutorial', 
-                                     h2('YouTube: WebEFS tutorial'),
-                                     HTML('<iframe width="560" height="315" src="https://www.youtube.com/embed/e5oHiaigA68" frameborder="0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen"></iframe>'),
+                                     h2('YouTube: EnsembleFS tutorial'),
+                                     HTML('<iframe width="1100" height="700" src="https://www.youtube.com/embed/e5oHiaigA68" frameborder="0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen"></iframe>'),
                                      hr(),
                                      h2('Example'),
                                      h4('Feature selection process'),
@@ -225,15 +226,15 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                      h5('4. Press RUN FEATURE SELECTION'),
                                      h5('5. Navigate to RANKING LIST for the set of most informative biomarkers'),
                                      h5('6. Navigate to FS STABILITY for stability calculation results'),
-                                     h5('7. Navigate to MODEL ACCURACY for the for model building results'),
-                                     h5('8. Navigate to PLOT for the to visualize stability results and build a model'),
-                                     h5('9. Navigate to DOWNLOAD ZIP for the to download all results in one archive'),
-                                     h4('Searching information about genes'),
+                                     h5('7. Navigate to MODEL ACCURACY for the model building results'),
+                                     h5('8. Navigate to PLOT to visualize stability results and model building results'),
+                                     h5('9. Navigate to DOWNLOAD ZIP to download all results as one archive'),
+                                     h4('Searching biological information about biomarkers'),
                                      h5('The process of aggregating information about the most informative biomarkers includes the following steps:'),
                                      h5('1. Navigate to GENE INFORMATION for biological information on top-100 biomarkers'),
-                                     h5('2. Choose the following parameters:'),
-                                     h5('- Number genes: 100'),
-                                     h5('- Biomarkers set: union'),
+                                     h5('2. Number of relevant biomarkers:'),
+                                     h5('- Top N variables with FS filter: 100'),
+                                     h5('- Combination of a set of biomarkers: union'),
                                      h5('- Data bases: all'),
                                      h5('3. Press GET ANALYSIS')
                                     
@@ -245,31 +246,32 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                      h5('The RNA-sequencing data of tumor-adjacent normal tissues of lung adenocarcinoma cancer patients.'),
                                      uiOutput("data.sample.set"),
                                      h4('Preprocessing of data'),
-                                     h5('The preprocesing of data involved standard steps for RNA-Seq data. First the log2 transformation was performed.'), 
-                                     h5('Then features with zero and near zero (1%) variance across patients were removed.'), 
+                                     h5('The preprocessing of data involved standard steps for RNA-Seq data. The log2 transformation was performed.'), 
+                                     h5('Features with zero and near-zero (1%) variance across patients were removed.'),
+                                     h4('Data subsetting'),
                                      h5('The number of probes was randomly limited to 2000 DEGs.'),
                                      h5('The tumor tissue samples were randomly limited to 100 samples'),
                                      h5('The number of normal tissue samples is equal to 59 samples')
                                      
                                      
                             ),
-                            tabPanel('WebEFS Flow Chart',
+                            tabPanel('EnsembleFS Flow Chart',
                                      img(src="FullProtocole.png", align = "center",height='600px',width='1200px'),
                                      h5('Fig1. Pipeline of the procedure to select the potential diagnostic/prognostic molecular markers.'),
                                      
                                      hr(),
-                                     h4('For more details on used procedure for building predictive models, please refer to: '),
+                                     h4('For more details on the used procedure for building predictive models, please refer to: '),
                                      h5('A. Polewko-Klim, W.R. Rudnicki. Analysis of Ensemble Feature Selection for Correlated High-Dimensional RNA-Seq Cancer Data.'),
                                      h5('In: Krzhizhanovskaya V. et al. (eds) Comp.Scien. ICCS 2020. Lecture Notes in Computer Science 12139 (2020), 525-538, Springer, Cham.'),
-                                     uiOutput("url.art.benchmark")
+                                     uiOutput("url.art.EnsembleFS")
                             )
                             )),
                tabPanel('Licence Information',
                         h4('Availability and requirements:'),
                         hr(),
-                        h5('Project name: WebEFS: ensemble feature selection methods for analysis of molecular data'),
+                        h5('Project name: EnsembleFS: ensemble feature selection methods for analysis of molecular data'),
                         hr(),
-                        h5('Source code: https://github.com/biocsuwb/WebEFS'),
+                        h5('Source code: https://github.com/biocsuwb/EnsembleFS'),
                         hr(),
                         h5('Operation system(s): Web based, Platform independent'),
                         hr(),
@@ -281,7 +283,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                         hr(),
                         h5('Any restrictions to use by non-academics: None.'),
                         hr(),
-                        h5('It is available from GitHub (https://github.com/biocsuwb/WebEFS) and is free open source software under an MIT license.'))
+                        h5('It is available from GitHub (https://github.com/biocsuwb/EnsembleFS) and is free open source software under an MIT license.'))
     
 ))
 
@@ -292,11 +294,12 @@ server <- function(session, input, output) {
                                    result.gene.info = data.frame())
     
     
-    url = a("here", href = "https://github.com/biocsuwb/ensembleFS")
+    url_app = a("here", href = "https://github.com/biocsuwb/EnsembleFS")
+    url_package = a("here", href = "https://github.com/biocsuwb/EnsembleFS-pacakge")
     email= a("here", href = 'http://matinf.uwb.edu.pl/pl/wydzial/kadra/pracownikii.php?cID=180')
-    url.art.benchmark = a('DOI: 10.1007/978-3-030-50420-5_39', href = "https://link.springer.com/chapter/10.1007%2F978-3-030-50420-5_39")
-    url.data.sample = a('https://www.cancer.gov/tcga',href = "https://www.cancer.gov/tcga")
-    url.art.MDFS = a('DOI: 10.1016/j.ins.2020.03.024',href = "https://www.sciencedirect.com/science/article/abs/pii/S0020025520302048?via%3Dihub")
+    url.art.EnsembleFS = a('DOIi: 10.1007/978-3-030-50420-5_39', href = "https://link.springer.com/chapter/10.1007%2F978-3-030-50420-5_39")
+    url.data.sample = a('https://www.cancer.gov/tcga', href = "https://www.cancer.gov/tcga")
+    url.art.MDFS = a('DOI: 10.1016/j.ins.2020.03.024', href = "https://www.sciencedirect.com/science/article/abs/pii/S0020025520302048?via%3Dihub")
     url.art.MCFS = a('DOI: 10.1093/bioinformatics/btm486', href = 'https://academic.oup.com/bioinformatics/article/24/1/110/204931?login=true')
     url.art.MRMR =  a('DOI: 10.1142/S0219720005001004' , href ="https://www.worldscientific.com/doi/abs/10.1142/S0219720005001004") 
     url.art.Lustgarten = a('PMCID: PMC2815476', href = "https://pubmed.ncbi.nlm.nih.gov/20351889/")
@@ -309,8 +312,12 @@ server <- function(session, input, output) {
         tagList("Write to the help desk  ", email)
     })
     
-    output$home.url <- renderUI({
-        tagList("The R package of WebEFS-tools is available ", url)
+    output$home.url_app <- renderUI({
+        tagList("The source code EnsembleFS is available here ", url_app)
+    })
+    
+    output$home.url_package <- renderUI({
+      tagList("The R package EnsembleFS is available ", url_package)
     })
     
     output$url.article = renderUI({
@@ -338,19 +345,26 @@ server <- function(session, input, output) {
         tagList("For more information, see", url.art.RF)
     })
     
+    output$url.art.EnsembleFS = renderUI({
+      tagList("For more information, see", url.art.EnsembleFS)
+    })
+    
   ####
     
     output$home.url <- renderUI({
-        tagList("The R package of WebBGS-tools is available ", url)
+        tagList("The R package of EnsembleFS is available ", url_package)
     })
+    
+    output$info.load.main.data <- renderText({"Please select a data set"})
     
     data <- reactive({
         validate(
-            need(input$file1 != "", "Please select a data set")
+            need(input$file1 != "", "")
         )
         inFile <- input$file1
         if (is.null(inFile)){return(NULL)}
         data <-  read.csv2(inFile$datapath)
+        output$info.load.main.data <- renderText({""})
         return(data)
     })
     output$contents <- renderDataTable({
@@ -595,9 +609,9 @@ server <- function(session, input, output) {
     ############GENE INFORMATION#################################################
     output$info.load.data <- renderText({
         if(length(store.result$gene.top) == 0){
-            paste("Data from the FEATURE SELECTION will be loaded here")
+            paste(" Load data from the FEATURE SELECTION  (relevant biomarkers)")
         }else{
-            paste("Data from the FEATURE SELECTION was load")
+            paste("Data from the FEATURE SELECTION (relevant biomarkers) was load")
         }
     })
     
@@ -605,7 +619,7 @@ server <- function(session, input, output) {
     output$checkbox.condition.method <- renderUI({
         if(length(store.result$gene.top) != 0){
             radioButtons("condition.methods",
-                               label = h4("Biomarkers set"), 
+                               label = h4("Combination of a set of biomarkers"), 
                                choices = list("Union" = 'union',
                                               "Intersection" = 'intersect'),
                                selected = 1)
