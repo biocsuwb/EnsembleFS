@@ -85,7 +85,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                             
                             conditionalPanel(
                                 condition = "input.methods.includes('fs.mrmr')",
-                                numericInput("nvar", label = h4("Number of relevant variables"), value = 10),
+                                numericInput("nvar", label = h4("Number of relevant variables"), value = 100),
                                 helpText("Note: hyperparameter of MRMR,
                                          setup no more than the number of all variables")
                             ),
@@ -288,7 +288,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
 ))
 
 server <- function(session, input, output) {
-    
+    options(shiny.maxRequestSize=200*1024^2)
     store.result <- reactiveValues(gene.top = list(),
                                    list.gene.analysis = list(),
                                    result.gene.info = data.frame())
@@ -414,6 +414,7 @@ server <- function(session, input, output) {
         ))
     }
     else{
+    print(ncol(data))###
     res <-  ensembleFS(x = data[,-input$num],
                        y = data[,input$num],
                        methods = input$methods,
@@ -722,11 +723,13 @@ server <- function(session, input, output) {
         return(df)
 
     })
-
-        output$information = renderDataTable(
+        
+        output$information = 
+        renderDataTable(
         select.information.GProfiler(),
-        options = list(pageLength = 5)
-    )
+        options = list(pageLength = 5))
+        
+
         
         
         output$save.information <- renderUI({
