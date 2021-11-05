@@ -16,7 +16,7 @@ library(venn)
 library(gprofiler2)
 ui <- fluidPage(theme = shinytheme("sandstone"), 
     navbarPage("EnsembleFS: ensemble feature selection methods for analysis of molecular data", 
-               tabPanel('Home',
+               tabPanel('Home', icon = icon("home", lib = "glyphicon"),
                         mainPanel(
                             h2('Welcome to  EnsembleFS '),
                             hr(),
@@ -49,7 +49,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                             h5('Computational Center, University of Bialystok, Bialystok, Poland ')
                         ),
                )),
-               tabPanel('FEATURE SELECTION',
+               tabPanel('FEATURE SELECTION',icon = icon("hand-pointer"),
                         sidebarPanel(
                             textOutput('info.load.main.data'),
                             fileInput('file1', 'Load file',
@@ -119,7 +119,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                 tabPanel("Download Zip", br(), uiOutput('downloadZip'))
                             ))),
                
-               tabPanel('GENE INFORMATION',
+               tabPanel('GENE INFORMATION', icon = icon("dna"), 
                         sidebarPanel(
                             textOutput('info.load.data'),        
                             hr(), 
@@ -163,7 +163,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                             ),
                             dataTableOutput('information')
                         )),
-               tabPanel('HELP',
+               tabPanel('HELP', icon = icon("question-circle"),
                         tabsetPanel(
                             type = "tabs",
                             tabPanel('Terminology',
@@ -258,7 +258,6 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                             tabPanel('EnsembleFS Flow Chart',
                                      img(src="FullProtocole.png", align = "center",height='600px',width='1200px'),
                                      h5('Fig1. Pipeline of the procedure to select the potential diagnostic/prognostic molecular markers.'),
-                                     
                                      hr(),
                                      h4('For more details on the used procedure for building predictive models, please refer to: '),
                                      h5('A. Polewko-Klim, W.R. Rudnicki. Analysis of Ensemble Feature Selection for Correlated High-Dimensional RNA-Seq Cancer Data.'),
@@ -266,7 +265,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                      uiOutput("url.art.EnsembleFS")
                             )
                             )),
-               tabPanel('Licence Information',
+               tabPanel('Licence Information', icon = icon("file-alt"),
                         h4('Availability and requirements:'),
                         hr(),
                         h5('Project name: EnsembleFS: ensemble feature selection methods for analysis of molecular data'),
