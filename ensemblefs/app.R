@@ -14,32 +14,38 @@ library(grid)
 library(gridExtra)
 library(venn)
 library(gprofiler2)
-ui <- fluidPage(theme = shinytheme("sandstone"), 
-    navbarPage("EnsembleFS: ensemble feature selection methods for analysis of molecular data", 
+library(plotly)
+library(ggplot2)
+library(slickR)
+
+ui <- fluidPage(theme = shinytheme("sandstone"),
+                
+    titlePanel(title=div(img(src="banner_2.gif",  align = "center", height="50%", width="100%"))),
+                
+    navbarPage("EnsembleFS: ensemble feature selection methods for analysis of molecular data",
                tabPanel('Home', icon = icon("home", lib = "glyphicon"),
                         mainPanel(
                             h2('Welcome to  EnsembleFS '),
                             hr(),
                             div(
-                                h4("EnsembleFS is tool that allows the user to: "),
-                                h5('- filter the most informative features/biomarkers from molecular data generated from high-throughput molecular biology experiments that could be new diagnostic/prognostic markers or therapeutic targets;'),
-                                h5('- establish the selected parameters for predictive models, such as the number of top N informative features;'),
-                                h5('- evaluate the stability of feature subsets and performance of predictive models;'),
-                                h5('- find information about gene collection (gene ontology, pathways, tissue specificity, miRNA targets,
-                                regulatory motif, protein complexes, disease phenotypes) in several biological databases.'),
-                                h5('It can be applied to two-class problems. EnsembleFS is based on several filter feature selection algorithms, such as the U-test, the Monte Carlo Feature Selection (MCFS),
-                                the MultiDimensional Feature Selection (MDFS), and the Minimum Redundancy Maximum Relevance (MRMR) for discovering the most important biomarkers and used the machine learning algorithms to evaluate the quality of feature sets.
-                                Predictive models are built using the Random Forest algorithm.'),
-                                h5('The information about each of the biomarkers was obtained from diverse biological databases, namely the Gene Ontology (molecular function, cellular component, biological process), the Kyoto Encyclopedia of Genes and Genomes (pathways),
+                                h3("EnsembleFS is tool that allows the user to: "),
+                                h4('- filter the most informative features/biomarkers from molecular data generated from high-throughput molecular biology experiments that could be new diagnostic/prognostic markers or therapeutic targets;'),
+                                h4('- establish the selected parameters for predictive models, such as the number of top N informative features;'),
+                                h4('- evaluate the stability of feature subsets and performance of predictive models;'),
+                                h4('- find information about gene collection (gene ontology, pathways, tissue specificity, miRNA targets, regulatory motif, protein complexes, disease phenotypes) in several biological databases.'),
+                                h4('It can be applied to two-class problems. EnsembleFS is based on several filter feature selection algorithms, such as the U-test, the Monte Carlo Feature Selection (MCFS), the MultiDimensional Feature Selection (MDFS), and the Minimum Redundancy Maximum Relevance (MRMR) for discovering the most important biomarkers and used the machine learning algorithms to evaluate the quality of feature sets. Predictive models are built using the Random Forest algorithm.'),
+                                h4('The information about each of the biomarkers was obtained from diverse biological databases, namely the Gene Ontology (molecular function, cellular component, biological process), the Kyoto Encyclopedia of Genes and Genomes (pathways), 
                                    the Reactome (pathways), the WikiPathways (pathways), the Transfac (regulatory motif), the miRNA targets (miRTarBase), the Human Protein Atlas (tissue specificity), the CORUM protein complexes, and the Human Phenotype Ontology (human disease phenotypes).'),
                             hr(),
                             h2('Overview'),
-                            img(src="Procedure2.png", align = "center",height='700px',width='1100px'),
+                            slickROutput("slideshow1", height='500px'),
+                            h2('Overview module functionalities'),
+                            slickROutput("slideshow2", height='500px'),
                             h5('For details on used notation, please refer to the Help -> Terminology'),
                             h5('For examples on how to use EnsembleFS, please refer to the Help -> Tutorial'),
                             h5('For description of sample dataset, please refer to the Help -> Sample Data'),
                             hr(),
-                            h4('Contact'),
+                            h5('Contact'),
                             uiOutput("home.email"),
                             uiOutput("home.url_app"),
                             uiOutput("home.url_package"),
@@ -110,10 +116,10 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                 tabPanel("FS Stability", tableOutput("stability"), uiOutput('downloadAsm')),
                                 tabPanel("Model Accuracy", tableOutput("model"), uiOutput('downloadModel')),
                                 tabPanel("Plots",
-                                         plotOutput("plot.stab"),
-                                         plotOutput("plot.model.acc"),
-                                         plotOutput("plot.model.auc"),
-                                         plotOutput("plot.model.mcc"),
+                                         plotlyOutput("plot.stab"),
+                                         plotlyOutput("plot.model.acc"),
+                                         plotlyOutput("plot.model.auc"),
+                                         plotlyOutput("plot.model.mcc"),
                                          br(),
                                          uiOutput('downloadPlot')),
                                 tabPanel("Download Zip", br(), uiOutput('downloadZip'))
@@ -148,7 +154,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                         "CORUM protein complexes" = 10,
                                                         "Human Phenotype Ontology (HP)" = 11,
                                                         "All" = 12),
-                                         selected = 1),
+                                         selected = 12),
 
                             hr(),
                             uiOutput('save.information'),
@@ -168,24 +174,24 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                             type = "tabs",
                             tabPanel('Terminology',
                                      h2('Feature selection algorithms'),
-                                     h4('U-test'),
+                                     h4('U-test [1]'),
                                      h5('The U-test is a nonparametric statistical test that assigns a probability to the hypothesis that two samples corresponding'),
                                      h5('to two decision classes (e.g. normal and tumor tissue) are drawn from populations with the same average value.'),
-                                     h4('MDFS'),
+                                     h4('MDFS [2]'),
                                      h5('MDFS method measures the decrease of the information entropy of the decision variable due to knowledge of k-dimensional tuples of variables'),
                                      h5('and measures the influence of each variable in the tuple. It performs an exhaustive search over all possible k-tuples and assigns to each'),
                                      h5('variable a maximal information gain due to a given variable that was achieved in any of the k-tuple that included this variable.'),
                                      h5('MDFS-1D is one-dimensional version of this algorithm. MDFS-2D is two-dimensional version of this algorithm.'),
                                      uiOutput("url.MDFS"),
-                                     h4('MCFS-IG'),
+                                     h4('MCFS-IG [3]'),
                                      h5('Monte Carlo Feature Selection and Interdependency Discovery is a Monte Carlo method-based tool for feature selection.'),
                                      uiOutput("url.MCFS"),
-                                     h4('MRMR'),
+                                     h4('MRMR [4]'),
                                      h5('Minimum redundancy maximum relevance feature selection. It selects the features which have minimal redundancy with the selected features'),
                                      h5('and maximal relevance with the class label. For more information, see DOI: 10.1142/S0219720005001004'),
                                      uiOutput("url.MRMR"),
                                      h2('Classifier'),
-                                     h4('Random Forest'),
+                                     h4('Random Forest [5]'),
                                      h5('Random forest is an ensemble of decision trees, where each tree is built on a different bagging sample of the original data set.'), 
                                      h5('For each split, a subset of variables is selected randomly and the one is selected that allows to achieve the highest Gini coefficient'),
                                      h5('for the resulting leaves. Random Forest works well on data sets with a small number of objects, has few tunable parameters that do not'),
@@ -203,9 +209,17 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                      h2('Measuring the stability of feature selection'),
                                      h5('The  total  stability  of  feature selection method  is  measured  as  the  average  of  the  pairwise  similarity  for  all  pairs'),
                                      h5('of the most informative feature subsets from n runs of a model.'),
-                                     h4('ASM'),
+                                     h4('ASM [6]'),
                                      h5('Lustgarten adjusted stability measure.'),
-                                     uiOutput("url.Lustgarten")
+                                     uiOutput("url.Lustgarten"),
+                                     hr(),
+                                     h5('[1] H. B. Mann and D. R. Whitney. Controlling the false discovery rate: A practical and powerful approach to multiple testing. Ann. Math. Statist., 18(1):50–60, 1947.'),
+                                     h5('[2] Krzysztof Mnich and Witold Rudnicki. All-relevant feature selection using multidimensional filters with exhaustive search. arXiv preprint arXiv:1705.05756, 2017.'),
+                                     h5('[3] Michał Draminski, Marcin Kierczak, Jacek Koronacki, and Jan Komorowski. Monte Carlo Feature Selection and Interdependency Discovery in Supervised Classification, volume 263 of SCI, pages 371–385. Springer, 2010.'),
+                                     h5('[4] C. Ding and H. Peng. Minimum redundancy feature selection from microarray gene expression data. Journal of Bioinformatics and Computational Biology, 3(2):185–205, 2005.'),
+                                     h5('[5]  L Breiman. Random forests. Machine Learning, 45:5–32, 2001.'),
+                                     h5('[6] Jonathan L. Lustgarten, Vanathi Gopalakrishnan, and Shyam Visweswaran. Measuring stability of feature selection in biomedical datasets.')
+                                     
                             ),
                             tabPanel('Tutorial', 
                                      h2('YouTube: EnsembleFS tutorial'),
@@ -286,8 +300,24 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
     
 ))
 
-server <- function(session, input, output) {
+server <- function(session, input, output){
+  
+    output$slideshow1 <- renderSlickR({
+      slides_pdf <- pdftools::pdf_convert("www/Scheme1.pdf",format = 'png',verbose = FALSE)
+      bottom_opts <- settings(arrows = FALSE, slidesToShow = 3, slidesToScroll = 1, centerMode = TRUE, focusOnSelect = TRUE,initialSlide = 0)
+      
+      slickR(slides_pdf, height = 500) %synch% (slickR(slides_pdf,height = 50) + bottom_opts)
+    })
+    
+    output$slideshow2 <- renderSlickR({
+      slides_pdf <- pdftools::pdf_convert("www/Scheme2.pdf",format = 'png',verbose = FALSE)
+      bottom_opts <- settings(arrows = FALSE, slidesToShow = 2, slidesToScroll = 1, centerMode = TRUE, focusOnSelect = TRUE,initialSlide = 0)
+      
+      slickR(slides_pdf, height = 500) %synch% (slickR(slides_pdf,height = 50) + bottom_opts)
+    })
+    
     options(shiny.maxRequestSize=200*1024^2)
+    
     store.result <- reactiveValues(gene.top = list(),
                                    list.gene.analysis = list(),
                                    result.gene.info = data.frame())
@@ -413,19 +443,21 @@ server <- function(session, input, output) {
         ))
     }
     else{
-    print(ncol(data))###
+    start_time <- Sys.time()
+
     res <-  ensembleFS(x = data[,-input$num],
                        y = data[,input$num],
                        methods = input$methods,
                        method.cv = input$cv,
                        params.cv = list(niter = input$niter, test.size = 0.3, k =3),
                        level.cor = input$level.cor,
-                       params = list(adjust = input$adjust, feature.number = input$nvar, alpha = 0.05),
+                       params = list(adjust = input$adjust, feature.number = input$nvar, alpha = 0.05, use.cuda = FALSE),
                        asm = c(input$methods),
                        model = c(input$methods)) 
  
   
-    
+    end_time <- Sys.time()
+    print(end_time - start_time)
         
     result_full <-reactive({
         res
@@ -455,28 +487,70 @@ server <- function(session, input, output) {
                      number.repeats = input$niter)
     })
     
-    plotinput <- function() {
-        list(asm = graph.result(res$stability, 'stability'),
-             acc =  graph.result(res$model, 'acc'),
-             auc = graph.result(res$model, 'auc'),
-             mcc = graph.result(res$model, 'mcc'))
-    }
     
-    result_plot <- reactive({
-        plotinput()
+    ## PLOT ASM
+    plotly.reult.asm = reactive({
+       data = result_asm()
+         
+       ggplot(data, aes(x= N, y = stability.asm, group= method, color= method)) +
+       geom_line() +
+       geom_point() +  
+       scale_x_continuous(breaks= c(seq(0,100, by = 10))) + 
+       labs(title= "ASM similarity measure between feature subsets vs top N variables.", y="ASM", x = "N") + 
+       theme_light()+
+       theme(legend.position = "bottom")
+   })
+    
+    ## PLOT ACC
+    plotly.reult.acc = reactive({
+      data = result_model()
+      
+      ggplot(data, aes(x= N, y = mean.acc, group= method, color= method)) +
+        geom_line() +
+        geom_point() +  
+        scale_x_continuous(breaks= c(seq(0,100, by = 10))) + 
+        labs(title= "The accuracy vs top N variables.", y="ACC", x = "N") + 
+        theme_light()+
+        theme(legend.position = "bottom")
     })
+    
+    ## PLOT AUC
+    plotly.reult.auc = reactive({
+      data = result_model()
+      
+      ggplot(data, aes(x= N, y = mean.auc, group= method, color= method)) +
+        geom_line() +
+        geom_point() +  
+        scale_x_continuous(breaks= c(seq(0,100, by = 10))) + 
+        labs(title= "Area under the ROC curve vs top N variables.", y="AUC", x = "N") + 
+        theme_light() +
+        theme(legend.position = "bottom")
+    })
+    
+    ## PLOT MCC
+    plotly.reult.mcc = reactive({
+      data = result_model()
+      
+      ggplot(data, aes(x= N, y = mean.mcc, group= method, color= method)) +
+        geom_line() +
+        geom_point() +  
+        scale_x_continuous(breaks= c(seq(0,100, by = 10))) + 
+        labs(title= "Matthews Correlation Coefficient vs top N variables.", y="MCC", x = "N") + 
+        theme_light()+
+        theme(legend.position = "bottom")
+    })
+    
     
     output$ranking <- renderDataTable(result_ranking())
     
-    output$stability <- renderTable(result_asm())
+    output$stability <- renderTable(result_asm()) 
     
     output$model <- renderTable(result_model())
     
-    
-    output$plot.stab <- renderPlot(result_plot()['asm'])
-    output$plot.model.acc <- renderPlot(result_plot()['acc'])
-    output$plot.model.auc <- renderPlot(result_plot()['auc'])
-    output$plot.model.mcc <- renderPlot(result_plot()['mcc'])
+    output$plot.stab <- renderPlotly(plotly.reult.asm())
+    output$plot.model.acc <- renderPlotly(plotly.reult.acc())
+    output$plot.model.auc <- renderPlotly(plotly.reult.auc())
+    output$plot.model.mcc <- renderPlotly(plotly.reult.mcc())
     
     #render download button
     output$downloadAsm <- renderUI({
@@ -492,7 +566,7 @@ server <- function(session, input, output) {
     })
     
     output$downloadPlot <- renderUI({
-        if(!is.null(result_plot())){
+        if(!is.null(plotly.reult.asm())){
             downloadButton('download_plot', 'Download PDF')
         }
     })
@@ -556,10 +630,10 @@ server <- function(session, input, output) {
         content = function(file) {
             pdf(file)
             
-            arrangeGrob(print(result_plot()[['asm']]),
-                        print(result_plot()[['acc']]), 
-                        print(result_plot()[['auc']]),
-                        print(result_plot()[['mcc']]), ncol = 4)  
+            arrangeGrob(print(plotly.reult.asm()),
+                        print(plotly.reult.acc()), 
+                        print(plotly.reult.auc()),
+                        print(plotly.reult.mcc(), ncol = 4))  
             dev.off()
         })
     
@@ -592,10 +666,10 @@ server <- function(session, input, output) {
             save(res, file = "full_result.RData")
 
             pdf('result.pdf')
-            arrangeGrob(print(result_plot()[['asm']]),
-                        print(result_plot()[['acc']]),
-                        print(result_plot()[['auc']]),
-                        print(result_plot()[['mcc']]), ncol = 4)
+            arrangeGrob(print(plotly.reult.asm()),
+                        print(plotly.reult.acc()), 
+                        print(plotly.reult.auc()),
+                        print(plotly.reult.mcc(), ncol = 4))  
             dev.off()
 
             print (fs)
@@ -683,6 +757,8 @@ server <- function(session, input, output) {
 
     observeEvent(input$get.analysis, {
         withProgress(message = 'Get analysis in progress. Please wait ...', {
+            start_time <- Sys.time()
+          
             gene.for.analysis <- store.result$list.gene.analysis
             if(input$condition.methods == 'intersect'){
                 var.imp <- Reduce(intersect, gene.for.analysis)
@@ -698,6 +774,8 @@ server <- function(session, input, output) {
               list.var.source <- append(list.var.source, list(var))
             }
             names(list.var.source) <- name.source
+            end_time <- Sys.time()
+            print(end_time - start_time)
             output$graph.venn.result <- renderPlot({
               venn(list.var.source, ilabels = TRUE, zcolor = "style", size = 25, cexil = 5, cexsn = 5, box = FALSE)
             })
