@@ -20,7 +20,7 @@ library(slickR)
 
 ui <- fluidPage(theme = shinytheme("sandstone"),
                 
-    titlePanel(title=div(img(src="banner_2.gif",  align = "center", height="50%", width="100%"))),
+    titlePanel(title=div(img(src="banner_im.gif",  align = "center", height="50%", width="100%"))),
                 
     navbarPage("EnsembleFS: ensemble feature selection methods for analysis of molecular data",
                tabPanel('Home', icon = icon("home", lib = "glyphicon"),
