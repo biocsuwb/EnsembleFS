@@ -20,7 +20,7 @@ library(slickR)
 
 ui <- fluidPage(theme = shinytheme("sandstone"),
                 
-    titlePanel(title=div(img(src="banner_im.gif",  align = "center", height="50%", width="100%"))),
+    titlePanel(title=div(img(src="banner.gif",  align = "center", height="50%", width="100%"))),
                 
     navbarPage("EnsembleFS: ensemble feature selection methods for analysis of molecular data",
                tabPanel('Home', icon = icon("home", lib = "glyphicon"),
@@ -82,7 +82,6 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                             "FDR" = "fdr",
                                                             "Hochberg" = "hochberg",
                                                             "Holm" = 'holm',
-                                                            "SGoF" = "SGoF",
                                                             "None" = "none"), 
                                              selected = 'fdr')
                             ),
@@ -152,7 +151,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                         "CORUM protein complexes" = 10,
                                                         "Human Phenotype Ontology (HP)" = 11,
                                                         "All" = 12),
-                                         selected = 12),
+                                         selected = 1),
 
                             hr(),
                             uiOutput('save.information'),
@@ -268,7 +267,8 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                      
                             ),
                             tabPanel('EnsembleFS Flow Chart',
-                                     img(src="FullProtocole.png", align = "center",height='600px',width='1200px'),
+                                     #img(src="FullProtocole.png", align = "center",height='600px',width='1200px'),
+                                     slickROutput("slideshow2", height='500px'),
                                      h5('Fig1. Pipeline of the procedure to select the potential diagnostic/prognostic molecular markers.'),
                                      hr(),
                                      h4('For more details on the used procedure for building predictive models, please refer to: '),
@@ -301,12 +301,18 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
 server <- function(session, input, output){
   
     output$slideshow1 <- renderSlickR({
-      slides_pdf <- pdftools::pdf_convert("www/Scheme.pdf",format = 'png',verbose = FALSE)
+      slides_pdf <- pdftools::pdf_convert("www/Overview_func.pdf",format = 'png',verbose = FALSE)
       bottom_opts <- settings(arrows = FALSE, slidesToShow = 3, slidesToScroll = 1, centerMode = TRUE, focusOnSelect = TRUE,initialSlide = 0)
       
       slickR(slides_pdf, height = 500) %synch% (slickR(slides_pdf,height = 50) + bottom_opts)
     })
     
+    output$slideshow2 <- renderSlickR({
+      slides_pdf <- pdftools::pdf_convert("www/Overview.pdf",format = 'png',verbose = FALSE)
+      bottom_opts <- settings(arrows = FALSE, slidesToShow = 3, slidesToScroll = 1, centerMode = TRUE, focusOnSelect = TRUE,initialSlide = 0)
+      
+      slickR(slides_pdf, height = 500) %synch% (slickR(slides_pdf,height = 50) + bottom_opts)
+    })
     
     options(shiny.maxRequestSize=200*1024^2)
     
@@ -674,43 +680,43 @@ server <- function(session, input, output){
     })
     ############GENE INFORMATION#################################################
     output$info.load.data <- renderText({
-        if(length(store.result$gene.top) == 0){
-            paste(" Load data from the FEATURE SELECTION  (relevant biomarkers)")
-        }else{
-            paste("Data from the FEATURE SELECTION (relevant biomarkers) was load")
-        }
+      if(length(store.result$gene.top) == 0){
+        paste(" Load data from the FEATURE SELECTION  (relevant biomarkers)")
+      }else{
+        paste("Data from the FEATURE SELECTION (relevant biomarkers) was load")
+      }
     })
     
     
     output$checkbox.condition.method <- renderUI({
-        if(length(store.result$gene.top) != 0){
-            radioButtons("condition.methods",
-                               label = h4("Combination of a set of biomarkers"), 
-                               choices = list("Union" = 'union',
-                                              "Intersection" = 'intersect'),
-                               selected = 1)
-        }
+      if(length(store.result$gene.top) != 0){
+        radioButtons("condition.methods",
+                     label = h4("Combination of a set of biomarkers"), 
+                     choices = list("Union" = 'union',
+                                    "Intersection" = 'intersect'),
+                     selected = 1)
+      }
     })
     
     output$get.information <- renderUI({
-        if(length(store.result$gene.top) != 0 && length(input$condition.methods) != 0){
-            actionButton("get.analysis", "GET ANALYSIS")
-        }
+      if(length(store.result$gene.top) != 0 && length(input$condition.methods) != 0){
+        actionButton("get.analysis", "GET ANALYSIS")
+      }
     })
     
     ###################HELER FUNCTION###################
     funGProfiler = function(rel.var){
-        df = list()
-        for (i in 1:length(rel.var)){
-            if(try(is.null(gost(query = rel.var[i]))))next
-            all.info = gost(query = rel.var[i])
-            df.res = all.info$result
-            df[[i]] = data.frame(term = rel.var[i], source = df.res$source, term.ID = df.res$term_id, term.name = df.res$term_name)
-        }
-        df = do.call(rbind,df)
-        return(df)
+      df = list()
+      for (i in 1:length(rel.var)){
+        if(try(is.null(gost(query = rel.var[i]))))next
+        all.info = gost(query = rel.var[i])
+        df.res = all.info$result
+        df[[i]] = data.frame(term = rel.var[i], source = df.res$source, term.ID = df.res$term_id, term.name = df.res$term_name)
+      }
+      df = do.call(rbind,df)
+      return(df)
     }
-   ###
+    ###
     ranking.var <- function(list.imp.var, level.freq, n){
       result <- c()
       name.method <- c()
@@ -735,47 +741,47 @@ server <- function(session, input, output){
     
     venn.for.methods <- eventReactive(input$geneNumber, {
       if(length(store.result$gene.top) != 0){
-      if(input$cv == 'rsampling') level.freq = round(input$niter / 2)
-      if(input$cv == 'kfoldcv') level.freq = round((3 * input$niter) / 2)
-      var.venn.methods <- ranking.var(store.result$gene.top, level.freq, input$geneNumber)
-      store.result$list.gene.analysis <- var.venn.methods
-      venn(var.venn.methods, ilabels = TRUE, zcolor = "style", size = 25, cexil = 5, cexsn = 5, box = FALSE)
+        if(input$cv == 'rsampling') level.freq = round(input$niter / 2)
+        if(input$cv == 'kfoldcv') level.freq = round((3 * input$niter) / 2)
+        var.venn.methods <- ranking.var(store.result$gene.top, level.freq, input$geneNumber)
+        store.result$list.gene.analysis <- var.venn.methods
+        venn(var.venn.methods, ilabels = TRUE, zcolor = "style", size = 25, cexil = 5, cexsn = 5, box = FALSE)
       }
     })
     
     output$graph.venn.methods <- renderPlot({
       venn.for.methods()
     })
-
+    
     observeEvent(input$get.analysis, {
-        withProgress(message = 'Get analysis in progress. Please wait ...', {
-            start_time <- Sys.time()
-          
-            gene.for.analysis <- store.result$list.gene.analysis
-            if(input$condition.methods == 'intersect'){
-                var.imp <- Reduce(intersect, gene.for.analysis)
-            }
-            else if(input$condition.methods == 'union'){
-                var.imp <- unique(unlist(gene.for.analysis))}
-            result <-  funGProfiler(var.imp)
-            store.result$result.gene.info <- result
-            name.source <- unique(result$source)
-            list.var.source <- c()
-            for(i in name.source){
-              var <- result[result$source == i, 1]
-              list.var.source <- append(list.var.source, list(var))
-            }
-            names(list.var.source) <- name.source
-            end_time <- Sys.time()
-            print(end_time - start_time)
-            output$graph.venn.result <- renderPlot({
-              venn(list.var.source, ilabels = TRUE, zcolor = "style", size = 25, cexil = 5, cexsn = 5, box = FALSE)
-            })
-        })})
-
+      withProgress(message = 'Get analysis in progress. Please wait ...', {
+        start_time <- Sys.time()
+        
+        gene.for.analysis <- store.result$list.gene.analysis
+        if(input$condition.methods == 'intersect'){
+          var.imp <- Reduce(intersect, gene.for.analysis)
+        }
+        else if(input$condition.methods == 'union'){
+          var.imp <- unique(unlist(gene.for.analysis))}
+        result <-  funGProfiler(var.imp)
+        store.result$result.gene.info <- result
+        name.source <- unique(result$source)
+        list.var.source <- c()
+        for(i in name.source){
+          var <- result[result$source == i, 1]
+          list.var.source <- append(list.var.source, list(var))
+        }
+        names(list.var.source) <- name.source
+        end_time <- Sys.time()
+        print(end_time - start_time)
+        output$graph.venn.result <- renderPlot({
+          venn(list.var.source, ilabels = TRUE, zcolor = "style", size = 25, cexil = 5, cexsn = 5, box = FALSE)
+        })
+      })})
+    
     
     select.information.GProfiler = eventReactive(input$typeBase, {
-        if(nrow(store.result$result.gene.info) != 0){
+      if(nrow(store.result$result.gene.info) != 0){
         all.info = store.result$result.gene.info
         if (input$typeBase == 1) df = subset(all.info, source == 'GO:MF')
         if (input$typeBase == 2) df = subset(all.info, source == 'GO:CC')
@@ -789,34 +795,34 @@ server <- function(session, input, output){
         if (input$typeBase == 10) df = subset(all.info, source == 'CORUM')
         if (input$typeBase == 11) df = subset(all.info, source == 'HP')
         if (input$typeBase == 12) df = all.info}
-        return(df)
-
+      return(df)
+      
     })
-        
-        output$information = 
-        renderDataTable(
+    
+    output$information = 
+      renderDataTable(
         select.information.GProfiler(),
         options = list(pageLength = 5))
-        
-
-        
-        
-        output$save.information <- renderUI({
-          if(!is.null(select.information.GProfiler())){
-            downloadButton('save.data', 'Save')
-          }
-        })
-        
-        output$save.data <- downloadHandler(
-          filename = function() {
-            paste('gene_inforamtion', ".csv", sep = "")
-          },
-          content = function(file) {
-            write.csv(select.information.GProfiler(), file, row.names = FALSE)
-          }
-        )
-        
-
+    
+    
+    
+    
+    output$save.information <- renderUI({
+      if(!is.null(select.information.GProfiler())){
+        downloadButton('save.data', 'Save')
+      }
+    })
+    
+    output$save.data <- downloadHandler(
+      filename = function() {
+        paste('gene_inforamtion', ".csv", sep = "")
+      },
+      content = function(file) {
+        write.csv(select.information.GProfiler(), file, row.names = FALSE)
+      }
+    )
+    
+    
 }
 
 shinyApp(ui = ui, server = server)
