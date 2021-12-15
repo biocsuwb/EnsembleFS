@@ -299,20 +299,24 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
 ))
 
 server <- function(session, input, output){
-  
+ 
+    
+    
     output$slideshow1 <- renderSlickR({
-      slides_pdf <- pdftools::pdf_convert("www/Overview_func.pdf",format = 'png',verbose = FALSE)
+      imgs <- list.files("www/overview_func", pattern=".png", full.names = TRUE)
       bottom_opts <- settings(arrows = FALSE, slidesToShow = 3, slidesToScroll = 1, centerMode = TRUE, focusOnSelect = TRUE,initialSlide = 0)
       
-      slickR(slides_pdf, height = 500) %synch% (slickR(slides_pdf,height = 50) + bottom_opts)
+      slickR(imgs, height = 500) %synch% (slickR(imgs, height = 50) + bottom_opts)
     })
     
+    
     output$slideshow2 <- renderSlickR({
-      slides_pdf <- pdftools::pdf_convert("www/Overview.pdf",format = 'png',verbose = FALSE)
+      imgs <- list.files("www/overview", pattern=".png", full.names = TRUE)
       bottom_opts <- settings(arrows = FALSE, slidesToShow = 3, slidesToScroll = 1, centerMode = TRUE, focusOnSelect = TRUE,initialSlide = 0)
       
-      slickR(slides_pdf, height = 500) %synch% (slickR(slides_pdf,height = 50) + bottom_opts)
+      slickR(imgs, height = 500) %synch% (slickR(imgs, height = 50) + bottom_opts)
     })
+    
     
     options(shiny.maxRequestSize=200*1024^2)
     
@@ -449,7 +453,7 @@ server <- function(session, input, output){
                        method.cv = input$cv,
                        params.cv = list(niter = input$niter, test.size = 0.3, k =3),
                        level.cor = input$level.cor,
-                       params = list(adjust = input$adjust, feature.number = input$nvar, alpha = 0.05, use.cuda = FALSE),
+                       params = list(adjust = input$adjust, feature.number = input$nvar, alpha = 0.05, use.cuda = TRUE),
                        asm = c(input$methods),
                        model = c(input$methods)) 
  
