@@ -107,6 +107,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                         sidebarPanel(
                             textOutput('info.load.main.data'),
                             fileInput('file1', 'Load file',
+                                      multiple = FALSE,
                                       accept=c('text/csv', 'text/comma-separated-values,text/plain', '.csv')),
                             
                             
@@ -438,39 +439,26 @@ server <- function(session, input, output){
   output$home.url <- renderUI({
     tagList("The R package of EnsembleFS is available ", url_package)
   })
-  
+  #####################  
   output$info.load.main.data <- renderText({"Please select a data set"})
+    
 
-    
-  observe({
-    if (input$data.default == TRUE) {
-      data <- reactive({
-        read.csv2('www/LUAD_test_dataset_500samples.csv', check.names = FALSE)
-      })
-      output$contents <- renderDataTable({
-        data()[,1:9]
-      })
-      
-    }
-    return(data)
-  })
-    
-    data <- reactive({
-        validate(
-            need(input$file1 != "", "")
-        )
-        inFile <- input$file1
-        if (is.null(inFile)){return(NULL)}
-        data <-  read.csv2(inFile$datapath, check.names = FALSE)
-        output$info.load.main.data <- renderText({""})
-        return(data)
+  data <- reactive({
+    if(is.null(input$file1) && input$data.default == TRUE){
+      read.csv2('www/LUAD_test_dataset_500samples.csv', check.names = FALSE)
+    }else if(is.null(input$file1)){
+        return(NULL)
+    }else{ 
+      data <- read.csv2(input$file1$datapath, check.names = FALSE)
+      output$info.load.main.data <- renderText({""})
+      return(data)  
+      }
     })
     
 
-      output$contents <- renderDataTable({
-         data()[,1:9]
-      })
- 
+   output$contents <- renderDataTable({
+        data()[,1:9]
+   })
  
     
     output$run <- renderUI({
@@ -623,10 +611,13 @@ server <- function(session, input, output){
     output$stability <- renderDataTable(result_asm()) 
     
     output$model <- renderDataTable(result_model())
-    
+  
     output$plot.stab <- renderPlotly(plotly.reult.asm())
+  
     output$plot.model.acc <- renderPlotly(plotly.reult.acc())
+    
     output$plot.model.auc <- renderPlotly(plotly.reult.auc())
+    
     output$plot.model.mcc <- renderPlotly(plotly.reult.mcc())
     
     #render download button
@@ -883,8 +874,6 @@ server <- function(session, input, output){
       renderDataTable(
         select.information.GProfiler(),
         options = list(pageLength = 5))
-    
-    
     
     
     output$save.information <- renderUI({
