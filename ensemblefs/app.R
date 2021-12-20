@@ -19,46 +19,98 @@ library(ggplot2)
 library(slickR)
 
 ui <- fluidPage(theme = shinytheme("sandstone"),
-                
-    titlePanel(title=div(img(src="banner.gif",  align = "center", height="50%", width="100%"))),
-                
-    navbarPage("EnsembleFS: ensemble feature selection methods for analysis of molecular data",
-               tabPanel('Home', icon = icon("home", lib = "glyphicon"),
-                        mainPanel(
-                            h2('Welcome to  EnsembleFS '),
-                            hr(),
-                            div(
-                                h3("EnsembleFS is tool that allows the user to: "),
-                                h4('- filter the most informative features/biomarkers from molecular data generated from high-throughput molecular biology experiments that could be new diagnostic/prognostic markers or therapeutic targets;'),
-                                h4('- establish the selected parameters for predictive models, such as the number of top N informative features;'),
-                                h4('- evaluate the stability of feature subsets and performance of predictive models;'),
-                                h4('- find information about gene collection (gene ontology, pathways, tissue specificity, miRNA targets, regulatory motif, protein complexes, disease phenotypes) in several biological databases.'),
-                                h4('It can be applied to two-class problems. EnsembleFS is based on several filter feature selection algorithms, such as the U-test, the Monte Carlo Feature Selection (MCFS), the MultiDimensional Feature Selection (MDFS), and the Minimum Redundancy Maximum Relevance (MRMR) for discovering the most important biomarkers and used the machine learning algorithms to evaluate the quality of feature sets. Predictive models are built using the Random Forest algorithm.'),
-                                h4('The information about each of the biomarkers was obtained from diverse biological databases, namely the Gene Ontology (molecular function, cellular component, biological process), the Kyoto Encyclopedia of Genes and Genomes (pathways), 
-                                   the Reactome (pathways), the WikiPathways (pathways), the Transfac (regulatory motif), the miRNA targets (miRTarBase), the Human Protein Atlas (tissue specificity), the CORUM protein complexes, and the Human Phenotype Ontology (human disease phenotypes).'),
-                            hr(),
-                            h2('Overview'),
-                            slickROutput("slideshow1", height='500px'),
-                            h5('For details on used notation, please refer to the Help -> Terminology'),
-                            h5('For examples on how to use EnsembleFS, please refer to the Help -> Tutorial'),
-                            h5('For description of sample dataset, please refer to the Help -> Sample Data'),
-                            hr(),
-                            h5('Contact'),
-                            uiOutput("home.email"),
-                            uiOutput("home.url_app"),
-                            uiOutput("home.url_package"),
-                            hr(),
-                            h5('Developed by Pavel Hrablis, Aneta Polewko-Klim'),
-                            h5('Institute of Computer Science, University of Bialystok, Bialystok, Poland'),
-                            h5('Computational Center, University of Bialystok, Bialystok, Poland ')
-                        ),
-               )),
-               tabPanel('FEATURE SELECTION',icon = icon("hand-pointer"),
+                titlePanel(title=div(img(src="banner.gif",  align = "center", height="60%", width="100%"))),
+                navbarPage("", collapsible = T, id="demo",
+                           tabPanel(h4('HOME'), icon = icon("home", lib = "glyphicon", "fa-2x"),
+                                    mainPanel(width = 11,
+                                              h1(strong('Welcome to  EnsembleFS ')),
+                                              hr(),
+                                              div(
+                                                h4("EnsembleFS is tool that allows the user to: "),
+                                                h4('- filter the most informative features (biomarkers) by using ensemble feature selection approach from molecular data generated from high-throughput molecular 
+                                   biology experiments;'),
+                                                h4('- establish the selected parameters for predictive models, such as the number of top N informative features;'),
+                                                h4('- remove redundant features by building a the Spearman correlation matrix that identifies highly correlated features;'),
+                                                h4('- evaluate the stability of feature subsets and performance of predictive models;'),
+                                                h4('- find information about selected biomarkers (gene ontology, pathways, tissue specificity, miRNA targets, regulatory motif, protein complexes, disease phenotypes) 
+                                   in several biological databases.'),
+                                                h4('It can be applied to two-class problems. EnsembleFS is based on several filter feature selection algorithms, such as the test U Manna-Whitneya, 
+                                   the Monte Carlo Feature Selection (MCFS), the MultiDimensional Feature Selection (MDFS), and the Minimum Redundancy Maximum Relevance (MRMR) for discovering the most important biomarkers and used the machine learning algorithms to evaluate the quality of feature sets. Predictive models are built using the Random Forest algorithm.'),
+                                                h4('The information about each of the biomarkers is extracted from diverse biological databases, namely the Gene Ontology, the Kyoto Encyclopedia of Genes and Genomes, 
+                                   the Reactome, the WikiPathways, the Transfac, the miRNA targets, the Human Protein Atlas, the CORUM, and the Human Phenotype Ontology.'),
+                                                h4(strong('For details on feature selection and classification algorithms, please refer to the Help -> Terminology')),
+                                                
+                                                h1(strong('Overview')),
+                                                hr(),
+                                                img(src="Overview_func.png", align = "center",height='900px',width='2200px'),
+                                                h4('Figure 1. Flow chart for EsembleFS: A) the feature selection process and model evaluation process, B) a scheme of ensemble-based feature selection method,
+                                   C) a scheme for biological information collection and integration about biomarkers. For details on used notation, please refer to the Help -> Terminology'),
+                                                
+                                                h3(strong('The feature selection process and the model validation')),
+                                                hr(),
+                                                h4('The FS process is based on the combination of the heterogeneous ensemble approach for feature selection and machine learning. As shown in Figure 1A, 
+                                   the basic modeling procedure involves the following steps:'),
+                                                h4('(1) split randomly the samples into training and test set;'),
+                                                h4('(2) select and rank informative features using the feature filter on training set;'),
+                                                h4('(3) remove correlated features with the training set;'),
+                                                h4('(4) build model on the training set;'),
+                                                h4('(5) estimate the stability of a FS algorithm and quality of the predictive model on test set.'),
+                                                h4('To evaluate quality of the feature set, EnsambleFS applies the supervised machine mearning procedure, namely, the predictive models are built with top N features
+                                using the random forest algorithm and the stratified 3-fold cross-validation procedure or the 0.3 random sampling is used to evaluate classification models. 
+                                The mean values of ACC, AUC, MCC, and ASM metric are calculated for each of FS methods. To minimize the collinearity of features, the correlated variables are removed 
+                                using the correlation coefficient method from the train dataset. The most informative features are identified as those that appear most consistently in top N features 
+                                selected by FS method in n resampling operations. Herein, the best feature set is selected by the majority voting method (ie. morethan half) for each basic feature 
+                                selector. As shown in Figure 1B, the total feature set for further biological analysis included all the best features or overlapping best features selected by basic filters.'),
+                                                hr(),
+                                                h4('For more details on the used procedure for building predictive models, please refer to [1]'),
+                                                h5('[1] A. Polewko-Klim, W.R. Rudnicki. Analysis of Ensemble Feature Selection for Correlated High-Dimensional RNA-Seq Cancer Data. In: Krzhizhanovskaya V. et al. (eds) Comp.Scien. ICCS 2020. Lecture Notes in Computer Science 12139 (2020), 525-538, Springer, Cham.'),
+                                                uiOutput("url.art.EnsembleFS"),
+                                                
+                                                h3(strong('The biological gene information collection')),
+                                                hr(),
+                                                h4('EnsembleFS allows the users to access to fundamental biological information for finally selected biomakers from several databases. 
+                                As shown in Figure 1C, user research analysis may include intersection or union of the most informative biomarker sets with up to five FS methods.
+                                For each biomarker, the biological information is obtained from the following databases: the Gene Ontology (the molecular function, the cellular component, 
+                                and the biological process), the Kyoto Encyclopedia of Genes and Genomes (the pathways), the Reactome (the pathways), 
+                                and WikiPathways (the pathways), Transfac (the regulatory motif), miRTarBase (the miRNA targets), 
+                                the Human Protein Atlas (the tissue specificity), the CORUM (the protein complexes), 
+                                and the Human Phenotype Ontology (the human disease phenotypes).'),
+                                                
+                                                
+                                                h1(strong('Workflow')),
+                                                hr(),
+                                                img(src="Workflow.png", align = "center",height='500px',width='2200px'),
+                                                h4('Figure 2. Main functionality modules of EnsembleFS: A) Feature Selection tab, B) Gene information tab. The cuboids represent the interaction between EnsembleFS and the user, and the ellipses represent EnsembleFS processes.'),
+                                                
+                                                h1(strong('Tutorial')),
+                                                hr(),
+                                                h4(strong('For examples on how to use EnsembleFS, please refer to the Help -> Tutorial')),
+                                                
+                                                h3(strong('Cite as')),
+                                                hr(),
+                                                h4('When using this web server, please cite the following references:'),
+                                                
+                                                h3(strong('EnsembleFS R toolkit')),
+                                                hr(),
+                                                uiOutput("home.url_app"),
+                                                uiOutput("home.url_package"),
+                                                
+                                                h3(strong('Contact')),
+                                                hr(), 
+                                                uiOutput("home.email"),
+                                                hr(), 
+                                                h4('Developed by Pavel Hrablis & Aneta Polewko-Klim'),
+                                                h4('Institute of Computer Science, University of Bialystok, Bialystok, Poland')
+                                              ),
+                                    )),
+               tabPanel(h4('FEATURE SELECTION'),icon = icon("hand-pointer", "fa-2x"),
                         sidebarPanel(
                             textOutput('info.load.main.data'),
                             fileInput('file1', 'Load file',
                                       accept=c('text/csv', 'text/comma-separated-values,text/plain', '.csv')),
                             
+                            
+                            checkboxInput('data.default', label = h4('Load demo data'), value = FALSE),
                             
                             numericInput("num",
                                          label = h4("Column number of decision variable"),
@@ -68,7 +120,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                label = h4("Feature selection methods (FS)"), 
                                                choices = list("U-test" = 'fs.utest',
                                                               "MRMR" = 'fs.mrmr',
-                                                              "MCFS-ID" = 'fs.mcfs',
+                                                              "MCFS" = 'fs.mcfs',
                                                               "MDFS-1D" = 'fs.mdfs.1D',
                                                               "MDFS-2D" = 'fs.mdfs.2D'),
                                                selected = 'fs.utest'),
@@ -86,18 +138,32 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                              selected = 'fdr')
                             ),
                             
+                            
                             conditionalPanel(
-                                condition = "input.methods.includes('fs.mrmr')",
-                                numericInput("nvar", label = h4("Number of relevant variables"), value = 100),
-                                helpText("Note: hyperparameter of MRMR,
+                              condition = "input.methods.includes('fs.mrmr')",
+                              numericInput("nvar", label = h4("Number of relevant variables"), value = 100),
+                              helpText("Note: hyperparameter of MRMR,
                                          setup no more than the number of all variables")
                             ),
+                            
+                            
+                            conditionalPanel(
+                              condition = "input.methods.includes('fs.mcfs')",
+                              selectInput("cutoff", label = h4("Cutoff method"),
+                                          choices = list("kmeans" = "kmeans",
+                                                         "permutations" = "permutations",
+                                                         "criticalAngle" = "criticalAngle"), 
+                                          selected = 'kmeans'),
+                              helpText("Note: hyperparameter of MCFS,
+                                          The methods of finding cutoff value between important and unimportant attributes")
+                            ),
+                            
                             
                             sliderInput("level.cor", label = h4("Correlation coefficient"), min = 0, max = 1, value = 0.75),
                             
                             radioButtons("cv", label = h4("Validation methods"),
-                                         choices = list("3-fold cross-validation" = 'kfoldcv', "random sample (test set 30%)" = 'rsampling'), 
-                                         selected = 'kfoldcv', inline = TRUE),
+                                         choices = list("random sample (test set 30%)" = 'rsampling', "3-fold cross-validation" = 'kfoldcv'), 
+                                         selected = 'rsampling', inline = TRUE),
                             
                             sliderInput("niter", label = h4("Number iteration"), min = 1, max = 30, value = 10),
                             
@@ -110,8 +176,8 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                 type = "tabs",
                                 tabPanel("Data",  dataTableOutput('contents')),
                                 tabPanel("Ranking List", dataTableOutput("ranking"), uiOutput('downloadRanking')),
-                                tabPanel("FS Stability", tableOutput("stability"), uiOutput('downloadAsm')),
-                                tabPanel("Model Accuracy", tableOutput("model"), uiOutput('downloadModel')),
+                                tabPanel("FS Stability",  dataTableOutput("stability"), uiOutput('downloadAsm')),
+                                tabPanel("Model Accuracy",  dataTableOutput("model"), uiOutput('downloadModel')),
                                 tabPanel("Plots",
                                          plotlyOutput("plot.stab"),
                                          plotlyOutput("plot.model.acc"),
@@ -122,7 +188,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                 tabPanel("Download Zip", br(), uiOutput('downloadZip'))
                             ))),
                
-               tabPanel('GENE INFORMATION', icon = icon("dna"), 
+               tabPanel(h4('GENE INFORMATION'), icon = icon("dna", "fa-2x"),
                         sidebarPanel(
                             textOutput('info.load.data'),        
                             hr(), 
@@ -166,227 +232,228 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                             ),
                             dataTableOutput('information')
                         )),
-               tabPanel('HELP', icon = icon("question-circle"),
+               tabPanel(h4(' HELP '), icon = icon("question-circle", "fa-2x"), 
                         tabsetPanel(
-                            type = "tabs",
-                            tabPanel('Terminology',
-                                     h2('Feature selection algorithms'),
-                                     h4('U-test [1]'),
-                                     h5('The U-test is a nonparametric statistical test that assigns a probability to the hypothesis that two samples corresponding'),
-                                     h5('to two decision classes (e.g. normal and tumor tissue) are drawn from populations with the same average value.'),
-                                     h4('MDFS [2]'),
-                                     h5('MDFS method measures the decrease of the information entropy of the decision variable due to knowledge of k-dimensional tuples of variables'),
-                                     h5('and measures the influence of each variable in the tuple. It performs an exhaustive search over all possible k-tuples and assigns to each'),
-                                     h5('variable a maximal information gain due to a given variable that was achieved in any of the k-tuple that included this variable.'),
-                                     h5('MDFS-1D is one-dimensional version of this algorithm. MDFS-2D is two-dimensional version of this algorithm.'),
-                                     uiOutput("url.MDFS"),
-                                     h4('MCFS-IG [3]'),
-                                     h5('Monte Carlo Feature Selection and Interdependency Discovery is a Monte Carlo method-based tool for feature selection.'),
-                                     uiOutput("url.MCFS"),
-                                     h4('MRMR [4]'),
-                                     h5('Minimum redundancy maximum relevance feature selection. It selects the features which have minimal redundancy with the selected features'),
-                                     h5('and maximal relevance with the class label. For more information, see DOI: 10.1142/S0219720005001004'),
-                                     uiOutput("url.MRMR"),
-                                     h2('Classifier'),
-                                     h4('Random Forest [5]'),
-                                     h5('Random forest is an ensemble of decision trees, where each tree is built on a different bagging sample of the original data set.'), 
-                                     h5('For each split, a subset of variables is selected randomly and the one is selected that allows to achieve the highest Gini coefficient'),
-                                     h5('for the resulting leaves. Random Forest works well on data sets with a small number of objects, has few tunable parameters that do not'),
-                                     h5('relate directly to the data, and very rarely fails.'),
-                                     uiOutput("url.RF"),
-                                     h2('Measuring the quality of models'),
-                                     h4('AUC'),
-                                     h5('AUC - ROC curve is a performance measurement for the classification problems at various threshold settings.'),
-                                     h5('ROC is a probability curve and AUC represents the degree or measure of separability.'),
-                                     h4('ACC'),
-                                     h5('The accuracy of a machine learning classification algorithm is one way to measure how often the algorithm classifies a data point correctly.'),
-                                     h5('Accuracy is the number of correctly predicted data points out of all the data points.'),
-                                     h4('MCC'),
-                                     h5('Matthews correlation coefficient or phi coefficient is used in machine learning as a measure of the quality of binary classifications.'),
-                                     h2('Measuring the stability of feature selection'),
-                                     h5('The  total  stability  of  feature selection method  is  measured  as  the  average  of  the  pairwise  similarity  for  all  pairs'),
-                                     h5('of the most informative feature subsets from n runs of a model.'),
-                                     h4('ASM [6]'),
-                                     h5('Lustgarten adjusted stability measure.'),
-                                     uiOutput("url.Lustgarten"),
-                                     hr(),
-                                     h5('[1] H. B. Mann and D. R. Whitney. Controlling the false discovery rate: A practical and powerful approach to multiple testing. Ann. Math. Statist., 18(1):50–60, 1947.'),
-                                     h5('[2] Krzysztof Mnich and Witold Rudnicki. All-relevant feature selection using multidimensional filters with exhaustive search. arXiv preprint arXiv:1705.05756, 2017.'),
-                                     h5('[3] Michał Draminski, Marcin Kierczak, Jacek Koronacki, and Jan Komorowski. Monte Carlo Feature Selection and Interdependency Discovery in Supervised Classification, volume 263 of SCI, pages 371–385. Springer, 2010.'),
-                                     h5('[4] C. Ding and H. Peng. Minimum redundancy feature selection from microarray gene expression data. Journal of Bioinformatics and Computational Biology, 3(2):185–205, 2005.'),
-                                     h5('[5]  L Breiman. Random forests. Machine Learning, 45:5–32, 2001.'),
-                                     h5('[6] Jonathan L. Lustgarten, Vanathi Gopalakrishnan, and Shyam Visweswaran. Measuring stability of feature selection in biomedical datasets.')
-                                     
-                            ),
-                            tabPanel('Tutorial', 
-                                     h2('YouTube: EnsembleFS tutorial'),
-                                     HTML('<iframe width="1100" height="700" src="https://www.youtube.com/embed/e5oHiaigA68" frameborder="0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen"></iframe>'),
-                                     hr(),
-                                     h2('Example'),
-                                     h4('Feature selection process'),
-                                     h5('The process of the selection of the most informative biomarkers includes the following steps:'),
-                                     h5('1. Navigate to the FEATURE SELECTION tab.'),
-                                     h5('2. Load csv/txt file (separator = ";", decimal = ",") and enter the column number for the binary decision variable'),
-                                     h5('3. Choose the following parameters:'),
-                                     h5('- Feature selection methods: U-test, MRMR'),
-                                     h5('- Multitest correction: fdr'),
-                                     h5('- Number of relevant variables: 100'),
-                                     h5('- Correlation coefficient: 0.75'),
-                                     h5('- Validation methods: 3-fold cross-validation'),
-                                     h5('- Number of repetitions: 10'),
-                                     h5('4. Press RUN FEATURE SELECTION'),
-                                     h5('5. Navigate to RANKING LIST for the set of most informative biomarkers'),
-                                     h5('6. Navigate to FS STABILITY for stability calculation results'),
-                                     h5('7. Navigate to MODEL ACCURACY for the model building results'),
-                                     h5('8. Navigate to PLOT to visualize stability results and model building results'),
-                                     h5('9. Navigate to DOWNLOAD ZIP to download all results as one archive'),
-                                     h4('Searching biological information about biomarkers'),
-                                     h5('The process of aggregating information about the most informative biomarkers includes the following steps:'),
-                                     h5('1. Navigate to GENE INFORMATION for biological information on top-100 biomarkers'),
-                                     h5('2. Number of relevant biomarkers:'),
-                                     h5('- Top N variables with FS filter: 100'),
-                                     h5('- Combination of a set of biomarkers: union'),
-                                     h5('- Data bases: all'),
-                                     h5('3. Press GET ANALYSIS')
-                                    
-                            ),
-                            tabPanel('Sample Data', 
-                                     h2('Study dataset'),
-                                     hr(),
-                                     h4('Experimental data'),
-                                     h5('The RNA-sequencing data of tumor-adjacent normal tissues of lung adenocarcinoma cancer patients.'),
-                                     uiOutput("data.sample.set"),
-                                     h4('Preprocessing of data'),
-                                     h5('The preprocessing of data involved standard steps for RNA-Seq data. The log2 transformation was performed.'), 
-                                     h5('Features with zero and near-zero (1%) variance across patients were removed.'),
-                                     h4('Data subsetting'),
-                                     h5('The number of probes was randomly limited to 2000 DEGs.'),
-                                     h5('The tumor tissue samples were randomly limited to 100 samples'),
-                                     h5('The number of normal tissue samples is equal to 59 samples')
-                                     
-                                     
-                            ),
-                            tabPanel('EnsembleFS Flow Chart',
-                                     #img(src="FullProtocole.png", align = "center",height='600px',width='1200px'),
-                                     slickROutput("slideshow2", height='500px'),
-                                     h5('Fig1. Pipeline of the procedure to select the potential diagnostic/prognostic molecular markers.'),
-                                     hr(),
-                                     h4('For more details on the used procedure for building predictive models, please refer to: '),
-                                     h5('A. Polewko-Klim, W.R. Rudnicki. Analysis of Ensemble Feature Selection for Correlated High-Dimensional RNA-Seq Cancer Data.'),
-                                     h5('In: Krzhizhanovskaya V. et al. (eds) Comp.Scien. ICCS 2020. Lecture Notes in Computer Science 12139 (2020), 525-538, Springer, Cham.'),
-                                     uiOutput("url.art.EnsembleFS")
-                            )
-                            )),
-               tabPanel('Licence Information', icon = icon("file-alt"),
-                        h4('Availability and requirements:'),
+                          type = "tabs",
+                          tabPanel('Terminology', 
+                                   h1(strong('Feature selection algorithms')),
+                                   hr(),
+                                   h3(strong('Mann-Whitney U-test (U-test)')),
+                                   h4('U-test is a nonparametric statistical test [1] that assigns a probability to the hypothesis that two samples corresponding'),
+                                   h4('to two decision classes (e.g. normal and tumor tissue) are drawn from populations with the same average value.'),
+                                   hr(),
+                                   h5('[1] H. B. Mann and D. R. Whitney. Controlling the false discovery rate: A practical and powerful approach to multiple testing. Ann. Math. Statist., 18(1):50–60, 1947.'),
+                                   h3(strong('MultiDimensional Feature Selection (MDFS)')),
+                                   h4('MDFS method measures the decrease of the information entropy of the decision variable due to knowledge of k-dimensional tuples of variables and measures the influence of each variable in the tuple.'),
+                                   h4('It performs an exhaustive search over all possible k-tuples and assigns to each variable a maximal information gain due to a given variable that was achieved in any of the k-tuple that included this variable.'),
+                                   h4('MDFS-1D is one-dimensional version of this algorithm. MDFS-2D is two-dimensional version of this algorithm.[2]'),
+                                   hr(),
+                                   h5('[2] K. Mnich and W.R. Rudnicki. All-relevant feature selection using multidimensional filters with exhaustive search. Information Sciences, 524:277-297, 2017'),
+                                   uiOutput("url.MDFS"),
+                                   h3(strong('Monte Carlo Feature Selection (MCFS)')),
+                                   h4('MCFS method relies on a Monte Carlo approach to select informative features. The MCFS-ID algorithm is capable of incorporating inter-dependencies between features.'),
+                                   h4('The EnsambleFS uses the one of three different cut-off methods for discerning informative features and non-informative features, namely critical angle, permutations, and k-means.[3]'),
+                                   h4('For example k-means method (the default cut-off method) clusters the relative importance values into two clusters and sets the cutoff where two clusters are separated.'),
+                                   hr(),
+                                   h5('[3] M. Draminski, M. Kierczak, J. Koronacki, and J. Komorowski. Monte Carlo Feature Selection and Interdependency Discovery in Supervised Classification, Advances in Machine Learning II. Studies in Computational Intelligence, vol 263. Springer, Berlin, Heidelberg'),
+                                   uiOutput("url.MCFS"),
+                                   h3(strong('Minimum Redundancy Maximum Relevance (MRMR)')),
+                                   h4('The MRMR method is based on mutual information as a measure of the relevancy and redundancy, where the redundancy of a selected feature subset is an aggregate mutual information measure'),
+                                   h4('between each pair of features in the selected feature and the relevancy to a class is an aggregate mutual information measure between each feature with respect to the class.[4]'),
+                                   hr(),
+                                   h5('[4] C. Ding and H. Peng. Minimum redundancy feature selection from microarray gene expression data. Journal of Bioinformatics and Computational Biology, 3(2):185–205, 2005.'),
+                                   uiOutput("url.MRMR"),
+                                   h1(strong('Classification algorithm')),
+                                   hr(),
+                                   h3(strong('Random Forest')),
+                                   h4('Random forest is an ensemble of decision trees, where each tree is built on a different bagging sample of the original data set.[5] For each split, a subset of variables is selected randomly '), 
+                                   h4('and the one is selected that allows to achieve the highest Gini coefficient for the resulting leaves. Random Forest works well on data sets with a small number of objects, '),
+                                   h4('has few tunable parameters that do not relate directly to the data, and very rarely fails.'),
+                                   hr(),
+                                   h5('[5]  L Breiman. Random forests. Machine Learning, 45:5-32, 2001.'),
+                                   uiOutput("url.RF"),
+                                   h1(strong('Model evaluation metrics')),
+                                   hr(),
+                                   h3(strong('The area under receiver operator curve (AUC)')),
+                                   h4('AUC - ROC curve is a performance measurement for the classification problems at various threshold settings. ROC is a probability curve and AUC represents the degree or measure of separability.'),
+                                   hr(),
+                                   h3(strong('Accuracy (ACC)')),
+                                   h4('The accuracy of a machine learning classification algorithm is one way to measure how often the algorithm classifies a data point correctly.'),
+                                   h4('This evaluation metric is the number of correctly predicted data points out of all the data points. The ACC values range from 0 (no correct decision/prediction) to 1 (perfect decision/prediction)'),
+                                   h4('The accuracy is expressed by:'),
+                                   img(src="ACC.png", align = "center",height='120px',width='950px'),
+                                   hr(),
+                                   h3(strong('Matthews correlation coefficient (MCC)')),
+                                   h4('The Matthews correlation coefficient or phi coefficient is used in machine learning as a measure of the quality of binary classifications. The MCC value between -1 and +1.'),
+                                   h4('A coefficient of +1 represents a perfect prediction, 0 an average random prediction and -1 an inverse prediction. The MCC is expressed by formula:'),
+                                   img(src="MCC.png", align = "center",height='60px',width='950px'),
+                                   h1(strong('Feature stability measure')),
+                                   hr(),
+                                   h3(strong('The Lustgarten adjusted stability measure (ASM)')),
+                                   h4('The  total stability of feature selection method is  measured  as  the  average  of  the  pairwise  similarity  for  all  pairs'),
+                                   h4('of the most informative feature subsets from n runs of a model. For this, the ASM metric was used, that is described by the following formula:'),
+                                   img(src="ASM.png", align = "center",height='150px',width='950px'),
+                                   hr(),
+                                   h5('[6] J.L. Lustgarten, V. Gopalakrishnan, and S. Visweswaran, Measuring stability of feature selection in biomedical datasets, AMIA ... Annual Symposium proceedings, AMIA Symposium vol. 2009 406-10, 14 Nov. 2009'),
+                                   uiOutput("url.Lustgarten"),
+                                   hr()
+                          ),
+                          tabPanel('Tutorial', 
+                                   h1(strong('YouTube: EnsembleFS tutorial')),
+                                   hr(),
+                                   HTML('<iframe width="800" height="400" src="https://www.youtube.com/embed/e5oHiaigA68" frameborder="0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen"></iframe>'),
+                                   h1(strong('A short workflow')),
+                                   hr(),
+                                   
+                                   h3(strong('The Ensemble feature selection process')),
+                                   h4('The process of the selection of the most informative biomarkers includes the following steps:'),
+                                   h4('1. Navigate to the FEATURE SELECTION tab.'),
+                                   h4('2. Load csv/txt file (separator = ";", decimal = ",") and enter the column number for the binary decision variable'),
+                                   h4('3. Choose the following parameters:'),
+                                   h4('- Feature selection methods: MRMR, MCFS, MDFS-1D'),
+                                   h4('- Multitest correction: fdr'),
+                                   h4('- MRMR parameter: number of significant features: 100'),
+                                   h4('- MCFS parameter: cut-off method: k-means'),
+                                   h4('- Correlation coefficient: 0.75'),
+                                   h4('- Validation methods: 3-fold cross-validation'),
+                                   h4('- Number of repetitions: 10'),
+                                   h4('4. Press RUN FEATURE SELECTION'),
+                                   h4('5. Navigate to RANKING LIST tab for the set of most informative biomarkers'),
+                                   h4('6. Navigate to FS STABILITY tab for stability calculation results'),
+                                   h4('7. Navigate to MODEL ACCURACY tab for the model building results'),
+                                   h4('8. Navigate to PLOT to visualize stability results and model building results'),
+                                   h4('9. Navigate to DOWNLOAD ZIP tab to download all results as one archive'),
+                                   
+                                   h3(strong('Searching biological information about biomarkers')),
+                                   h4('The process of aggregating information about the most informative biomarkers includes the following steps:'),
+                                   h4('1. Navigate to GENE INFORMATION tab for biological information on the top biomarkers'),
+                                   h4('2. Number of relevant biomarkers:'),
+                                   h4('- Top N variables with FS filter: 100'),
+                                   h4('- Combination of a set of biomarkers: union'),
+                                   h4('- Data bases: all'),
+                                   h4('3. Press GET ANALYSIS')
+                                   
+                          ),
+                          tabPanel('Example', 
+                                   h1(strong('Study experimental dataset')),
+                                   hr(),
+                                   h5('The RNA-sequencing data of tumor-adjacent normal tissues of lung adenocarcinoma cancer patients.'),
+                                   uiOutput("data.sample.set"),
+                                   h5('The preprocessing of data involved standard steps for RNA-Seq data. The log2 transformation was performed.'), 
+                                   h5('Features with zero and near-zero (1%) variance across patients were removed.'),
+                          )
+                        )),
+               tabPanel(h4('Licence Information'), icon = icon("file-alt", "fa-2x"),
+                        h2('Availability and requirements:'),
                         hr(),
-                        h5('Project name: EnsembleFS: ensemble feature selection methods for analysis of molecular data'),
+                        h4(strong('Project name:')),
+                        h4('EnsembleFS: ensemble feature selection methods for analysis of molecular data'),
                         hr(),
-                        h5('Source code: https://github.com/biocsuwb/EnsembleFS'),
+                        h4(strong('Source code:')),
+                        h4('https://github.com/biocsuwb/EnsembleFS'),
                         hr(),
-                        h5('Operation system(s): Web based, Platform independent'),
+                        h4(strong('Operation system(s):')),
+                        h4('Web based, Platform independent'),
                         hr(),
-                        h5('Programming language: R, R SHINY'),
+                        h4(strong('Programming language:')),
+                        h4('R, R SHINY'),
                         hr(),
-                        h5('Other requirements: Modern Browser'),
+                        h4(strong('Other requirements:')),
+                        h4('Modern Browser'),
                         hr(),
-                        h5('License: BSD License'),
+                        h4(strong('License:')),
+                        h4('BSD License'),
                         hr(),
-                        h5('Any restrictions to use by non-academics: None.'),
+                        h4(strong('Any restrictions to use by non-academics:')),
+                        h4('None.'),
                         hr(),
-                        h5('It is available from GitHub (https://github.com/biocsuwb/EnsembleFS) and is free open source software under an MIT license.'))
-    
-))
+                        h4(strong('Source code is available from GitHub (https://github.com/biocsuwb/EnsembleFS) and is free open source software under an MIT license.'))
+               )
+               
+                ))
 
 server <- function(session, input, output){
- 
     
+  options(shiny.maxRequestSize=200*1024^2)
+  
+  store.result <- reactiveValues(gene.top = list(),
+                                 list.gene.analysis = list(),
+                                 result.gene.info = data.frame())
+  
+  url_app = a("here", href = "https://github.com/biocsuwb/EnsembleFS")
+  url_package = a("here", href = "https://github.com/biocsuwb/EnsembleFS-pacakge")
+  email= a("here", href = 'http://matinf.uwb.edu.pl/pl/wydzial/kadra/pracownikii.php?cID=180')
+  url.art.EnsembleFS = a('10.1007/978-3-030-50420-5_39', href = "https://link.springer.com/chapter/10.1007%2F978-3-030-50420-5_39")
+  url.data.sample = a('https://www.cancer.gov/tcga', href = "https://www.cancer.gov/tcga")
+  url.art.MDFS = a('10.1016/j.ins.2020.03.024', href = "https://www.sciencedirect.com/science/article/abs/pii/S0020025520302048?via%3Dihub")
+  url.art.MCFS = a('10.1093/bioinformatics/btm486', href = 'https://academic.oup.com/bioinformatics/article/24/1/110/204931?login=true')
+  url.art.MRMR =  a('10.1142/S0219720005001004' , href ="https://www.worldscientific.com/doi/abs/10.1142/S0219720005001004") 
+  url.art.Lustgarten = a('PMCID: PMC2815476', href = "https://pubmed.ncbi.nlm.nih.gov/20351889/")
+  url.art.RF = a('10.1023/A:1010933404324', href = "https://link.springer.com/article/10.1023/A:1010933404324")
+  output$data.sample.set = renderUI({
+    tagList("The dataset from The Cancer Genome Atlas TCGA", url.data.sample)
+  })
+  
+  output$home.email <- renderUI({
+    tagList(h4("Write to the help desk  ", email))
+  })
+  
+  output$home.url_app <- renderUI({
+    tagList(h4("The source code EnsembleFS is available here ", url_app))
+  })
+  
+  output$home.url_package <- renderUI({
+    tagList(h4("The R package EnsembleFS is available ", url_package))
+  })
+  
+  output$url.article = renderUI({
+    tagList(h4("DOI:", url.art))
+  })
+  
+  
+  output$url.MCFS = renderUI({
+    tagList("DOI:", url.art.MCFS)
+  })
+  
+  output$url.MDFS = renderUI({
+    tagList("DOI:", url.art.MDFS)
+  })
+  
+  output$url.MRMR = renderUI({
+    tagList("DOI:", url.art.MRMR)
+  })
+  
+  output$url.Lustgarten = renderUI({
+    tagList("DOI:", url.art.Lustgarten)
+  })
+  
+  output$url.RF = renderUI({
+    tagList("DOI:", url.art.RF)
+  })
+  
+  output$url.art.EnsembleFS = renderUI({
+    tagList("DOI:", url.art.EnsembleFS)
+  })
+  
+  output$home.url <- renderUI({
+    tagList("The R package of EnsembleFS is available ", url_package)
+  })
+  
+  output$info.load.main.data <- renderText({"Please select a data set"})
+
     
-    output$slideshow1 <- renderSlickR({
-      imgs <- list.files("www/overview_func", pattern=".png", full.names = TRUE)
-      bottom_opts <- settings(arrows = FALSE, slidesToShow = 3, slidesToScroll = 1, centerMode = TRUE, focusOnSelect = TRUE,initialSlide = 0)
+  observe({
+    if (input$data.default == TRUE) {
+      data <- reactive({
+        read.csv2('www/LUAD_test_dataset_500samples.csv', check.names = FALSE)
+      })
+      output$contents <- renderDataTable({
+        data()[,1:9]
+      })
       
-      slickR(imgs, height = 500) %synch% (slickR(imgs, height = 50) + bottom_opts)
-    })
-    
-    
-    output$slideshow2 <- renderSlickR({
-      imgs <- list.files("www/overview", pattern=".png", full.names = TRUE)
-      bottom_opts <- settings(arrows = FALSE, slidesToShow = 3, slidesToScroll = 1, centerMode = TRUE, focusOnSelect = TRUE,initialSlide = 0)
-      
-      slickR(imgs, height = 500) %synch% (slickR(imgs, height = 50) + bottom_opts)
-    })
-    
-    
-    options(shiny.maxRequestSize=200*1024^2)
-    
-    store.result <- reactiveValues(gene.top = list(),
-                                   list.gene.analysis = list(),
-                                   result.gene.info = data.frame())
-    
-    
-    url_app = a("here", href = "https://github.com/biocsuwb/EnsembleFS")
-    url_package = a("here", href = "https://github.com/biocsuwb/EnsembleFS-pacakge")
-    email= a("here", href = 'http://matinf.uwb.edu.pl/pl/wydzial/kadra/pracownikii.php?cID=180')
-    url.art.EnsembleFS = a('DOIi: 10.1007/978-3-030-50420-5_39', href = "https://link.springer.com/chapter/10.1007%2F978-3-030-50420-5_39")
-    url.data.sample = a('https://www.cancer.gov/tcga', href = "https://www.cancer.gov/tcga")
-    url.art.MDFS = a('DOI: 10.1016/j.ins.2020.03.024', href = "https://www.sciencedirect.com/science/article/abs/pii/S0020025520302048?via%3Dihub")
-    url.art.MCFS = a('DOI: 10.1093/bioinformatics/btm486', href = 'https://academic.oup.com/bioinformatics/article/24/1/110/204931?login=true')
-    url.art.MRMR =  a('DOI: 10.1142/S0219720005001004' , href ="https://www.worldscientific.com/doi/abs/10.1142/S0219720005001004") 
-    url.art.Lustgarten = a('PMCID: PMC2815476', href = "https://pubmed.ncbi.nlm.nih.gov/20351889/")
-    url.art.RF = a('DOI: 10.1023/A:1010933404324', href = "https://link.springer.com/article/10.1023/A:1010933404324")
-    output$data.sample.set = renderUI({
-        tagList("The dataset from The Cancer Genome Atlas TCGA", url.data.sample)
-    })
-    
-    output$home.email <- renderUI({
-        tagList("Write to the help desk  ", email)
-    })
-    
-    output$home.url_app <- renderUI({
-        tagList("The source code EnsembleFS is available here ", url_app)
-    })
-    
-    output$home.url_package <- renderUI({
-      tagList("The R package EnsembleFS is available ", url_package)
-    })
-    
-    output$url.article = renderUI({
-        tagList("For more information, see", url.art)
-    })
-    
-    
-    output$url.MCFS = renderUI({
-        tagList("For more information, see", url.art.MCFS)
-    })
-    
-    output$url.MDFS = renderUI({
-        tagList("For more information, see", url.art.MDFS)
-    })
-    
-    output$url.MRMR = renderUI({
-        tagList("For more information, see", url.art.MRMR)
-    })
-    
-    output$url.Lustgarten = renderUI({
-        tagList("Lustgarten stability measure. For more information, see", url.art.Lustgarten)
-    })
-    
-    output$url.RF = renderUI({
-        tagList("For more information, see", url.art.RF)
-    })
-    
-    output$url.art.EnsembleFS = renderUI({
-      tagList("For more information, see", url.art.EnsembleFS)
-    })
-    
-  ####
-    
-    output$home.url <- renderUI({
-        tagList("The R package of EnsembleFS is available ", url_package)
-    })
-    
-    output$info.load.main.data <- renderText({"Please select a data set"})
+    }
+    return(data)
+  })
     
     data <- reactive({
         validate(
@@ -394,13 +461,17 @@ server <- function(session, input, output){
         )
         inFile <- input$file1
         if (is.null(inFile)){return(NULL)}
-        data <-  read.csv2(inFile$datapath)
+        data <-  read.csv2(inFile$datapath, check.names = FALSE)
         output$info.load.main.data <- renderText({""})
         return(data)
     })
-    output$contents <- renderDataTable({
-            data()[,1:9]
-    })
+    
+
+      output$contents <- renderDataTable({
+         data()[,1:9]
+      })
+ 
+ 
     
     output$run <- renderUI({
         if(!is.null(data()) && length(input$methods) != 0 && length(input$cv)){
@@ -453,7 +524,11 @@ server <- function(session, input, output){
                        method.cv = input$cv,
                        params.cv = list(niter = input$niter, test.size = 0.3, k =3),
                        level.cor = input$level.cor,
-                       params = list(adjust = input$adjust, feature.number = input$nvar, alpha = 0.05, use.cuda = TRUE),
+                       params = list(adjust = input$adjust,
+                                     feature.number = input$nvar,
+                                     alpha = 0.05,
+                                     use.cuda = TRUE,
+                                     cutoff.method = c(input$cutoff)),
                        asm = c(input$methods),
                        model = c(input$methods)) 
  
@@ -545,9 +620,9 @@ server <- function(session, input, output){
     
     output$ranking <- renderDataTable(result_ranking())
     
-    output$stability <- renderTable(result_asm()) 
+    output$stability <- renderDataTable(result_asm()) 
     
-    output$model <- renderTable(result_model())
+    output$model <- renderDataTable(result_model())
     
     output$plot.stab <- renderPlotly(plotly.reult.asm())
     output$plot.model.acc <- renderPlotly(plotly.reult.acc())
@@ -750,6 +825,7 @@ server <- function(session, input, output){
         var.venn.methods <- ranking.var(store.result$gene.top, level.freq, input$geneNumber)
         store.result$list.gene.analysis <- var.venn.methods
         venn(var.venn.methods, ilabels = TRUE, zcolor = "style", size = 25, cexil = 5, cexsn = 5, box = FALSE)
+        #venn(venn00, ilabels = TRUE, zcolor = "style", plotsize = 15, ilcs = 1.2, sncs = 1.2)
       }
     })
     
