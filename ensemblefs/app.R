@@ -16,11 +16,10 @@ library(venn)
 library(gprofiler2)
 library(plotly)
 library(ggplot2)
-library(slickR)
+
 
 ui <- fluidPage(theme = shinytheme("sandstone"),
-                div(img(src="banner.gif",  align = "center", height="60%", width="100%")),
-                titlePanel(title='EnsembleFS'),
+                titlePanel(title=div(img(src="banner.gif",  align = "center", height="60%", width="100%"))),
                 navbarPage("", collapsible = T, id="demo",
                            tabPanel(h4('HOME'), icon = icon("home", lib = "glyphicon", "fa-2x"),
                                     mainPanel(width = 11,
@@ -447,9 +446,14 @@ server <- function(session, input, output){
   data <- reactive({
     if(is.null(input$file1) && input$data.default == TRUE){
       read.csv2('www/LUAD_test_dataset_500samples.csv', check.names = FALSE)
-    }else if(is.null(input$file1)){
-        return(NULL)
-    }else{ 
+    }
+    else if(!is.null(input$file1) && input$data.default == TRUE){
+      read.csv2('www/LUAD_test_dataset_500samples.csv', check.names = FALSE)
+    }
+    else if(is.null(input$file1)){
+      return(NULL)
+    }
+    else{ 
       data <- read.csv2(input$file1$datapath, check.names = FALSE)
       output$info.load.main.data <- renderText({""})
       return(data)  
