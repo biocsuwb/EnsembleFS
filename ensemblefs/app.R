@@ -19,7 +19,8 @@ library(ggplot2)
 library(slickR)
 
 ui <- fluidPage(theme = shinytheme("sandstone"),
-                titlePanel(title=div(img(src="banner.gif",  align = "center", height="60%", width="100%"))),
+                div(img(src="banner.gif",  align = "center", height="60%", width="100%")),
+                titlePanel(title='EnsembleFS'),
                 navbarPage("", collapsible = T, id="demo",
                            tabPanel(h4('HOME'), icon = icon("home", lib = "glyphicon", "fa-2x"),
                                     mainPanel(width = 11,
@@ -142,7 +143,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                             
                             conditionalPanel(
                               condition = "input.methods.includes('fs.mrmr')",
-                              numericInput("nvar", label = h4("Number of relevant variables"), value = 100),
+                              numericInput("nvar", label = h4("Number of relevant variables"), value = 150),
                               helpText("Note: hyperparameter of MRMR,
                                          setup no more than the number of all variables")
                             ),
@@ -180,10 +181,10 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                 tabPanel("FS Stability",  dataTableOutput("stability"), uiOutput('downloadAsm')),
                                 tabPanel("Model Accuracy",  dataTableOutput("model"), uiOutput('downloadModel')),
                                 tabPanel("Plots",
-                                         plotlyOutput("plot.stab"),
-                                         plotlyOutput("plot.model.acc"),
-                                         plotlyOutput("plot.model.auc"),
-                                         plotlyOutput("plot.model.mcc"),
+                                         plotlyOutput("plot.stab", width = "100%", height = "100%"),
+                                         plotlyOutput("plot.model.acc", width = "100%", height = "100%"),
+                                         plotlyOutput("plot.model.auc", width = "100%", height = "100%"),
+                                         plotlyOutput("plot.model.mcc", width = "100%", height = "100%"),
                                          br(),
                                          uiOutput('downloadPlot')),
                                 tabPanel("Download Zip", br(), uiOutput('downloadZip'))
@@ -815,8 +816,7 @@ server <- function(session, input, output){
         if(input$cv == 'kfoldcv') level.freq = round((3 * input$niter) / 2)
         var.venn.methods <- ranking.var(store.result$gene.top, level.freq, input$geneNumber)
         store.result$list.gene.analysis <- var.venn.methods
-        venn(var.venn.methods, ilabels = TRUE, zcolor = "style", size = 25, cexil = 5, cexsn = 5, box = FALSE)
-        #venn(venn00, ilabels = TRUE, zcolor = "style", plotsize = 15, ilcs = 1.2, sncs = 1.2)
+        venn(var.venn.methods, ilabels = TRUE, zcolor = "style", plotsize = 25, ilcs = 1.2, sncs = 1.2, box = FALSE)
       }
     })
     
@@ -846,7 +846,7 @@ server <- function(session, input, output){
         end_time <- Sys.time()
         print(end_time - start_time)
         output$graph.venn.result <- renderPlot({
-          venn(list.var.source, ilabels = TRUE, zcolor = "style", size = 25, cexil = 5, cexsn = 5, box = FALSE)
+          venn(list.var.source, ilabels = TRUE, zcolor = "style", plotsize = 25, ilcs = 1.2, sncs = 1.2, box = FALSE)
         })
       })})
     
