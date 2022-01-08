@@ -45,7 +45,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                 h4('Computation time does not scale with the type of molecular data. Execution time of the task strong depends on the size of the dataset, the number of training iterations, as well as the type and number of feature filters. For example, the processing time is around XXX min for sample size 574, and 2000 probes.'),
                                                 h1(strong('Overview')),
                                                 hr(),
-                                                img(src="Overview_func.png", align = "center",height='750px',width='1900px'),
+                                                img(src="Overview_func.png", align = "center",height='1500px',width='1200px'),
                                                 h4('Figure 1. Flow chart for EsembleFS: A) the feature selection process and model evaluation process, B) a scheme of ensemble-based feature selection method,
                                    C) a scheme for biological information collection and integration about biomarkers. For details on used notation, please refer to the Help -> Terminology'),
                                                 
@@ -82,7 +82,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                 
                                                 h1(strong('Workflow')),
                                                 hr(),
-                                                img(src="Workflow.png", align = "center",height='400px',width='1900px'),
+                                                img(src="Workflow.png", align = "center",height='1000px',width='1200px'),
                                                 h4('Figure 2. Main functionality modules of EnsembleFS: A) Feature Selection tab, B) Gene information tab. The cuboids represent the interaction between EnsembleFS and the user, and the ellipses represent EnsembleFS processes.'),
                                                 
                                                 h1(strong('Tutorial')),
@@ -114,8 +114,15 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                 accept=c('text/csv', 'text/comma-separated-values,text/plain', '.csv')),
                                       
                                       
-                                      checkboxInput('data.default', label = h4('Load demo data'), value = FALSE),
+                                      checkboxInput('data.default110', label = h4('Load demo data 1'), value = FALSE),
                                       
+                                      helpText("Note: data size 110 features, and 574 samples; the processing time is around 2 min"),
+                                      
+                                      checkboxInput('data.default500', label = h4('Load demo data 2'), value = FALSE),
+                                      
+                                      helpText("Note: data size 500 features, and 574 samples; the processing time is around 9 min"),
+                           
+                     
                                       numericInput("num",
                                                    label = h4("Column number of decision variable"),
                                                    value = 1, min = 1),
@@ -145,7 +152,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                       
                                       conditionalPanel(
                                         condition = "input.methods.includes('fs.mrmr')",
-                                        numericInput("nvar", label = h4("Number of relevant variables"), value = 150),
+                                        numericInput("nvar", label = h4("Number of relevant variables"), value = 110),
                                         helpText("Note: hyperparameter of MRMR,
                                          setup no more than the number of all variables")
                                       ),
@@ -166,10 +173,10 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                       sliderInput("level.cor", label = h4("Correlation coefficient"), min = 0, max = 1, value = 0.75),
                                       
                                       radioButtons("cv", label = h4("Validation methods"),
-                                                   choices = list("random sample (test set 30%)" = 'rsampling', "3-fold cross-validation" = 'kfoldcv'), 
-                                                   selected = 'rsampling', inline = TRUE),
+                                                   choices = list("3-fold cross-validation" = 'kfoldcv', "random sample (test set 30%)" = 'rsampling'), 
+                                                   selected = 'kfoldcv', inline = TRUE),
                                       
-                                      sliderInput("niter", label = h4("Number iteration"), min = 1, max = 30, value = 10),
+                                      sliderInput("niter", label = h4("Number iteration"), min = 1, max = 30, value = 1),
                                       
                                       uiOutput("run"),
                                       
@@ -546,11 +553,20 @@ server <- function(session, input, output){
   
   
   data <- reactive({
-    if(is.null(input$file1) && input$data.default == TRUE){
+    if(is.null(input$file1) && input$data.default500 == TRUE){
       read.csv2('www/LUAD_test_dataset_500samples.csv', check.names = FALSE)
     }
-    else if(!is.null(input$file1) && input$data.default == TRUE){
+    else if(!is.null(input$file1) && input$data.default500 == TRUE){
       read.csv2('www/LUAD_test_dataset_500samples.csv', check.names = FALSE)
+    }
+    else if(is.null(input$file1) && input$data.default110 == TRUE){
+      read.csv2('www/LUAD_test_dataset_110features.csv', check.names = FALSE)
+    }
+    else if(!is.null(input$file1) && input$data.default110 == TRUE){
+      read.csv2('www/LUAD_test_dataset_110features.csv', check.names = FALSE)
+    }
+    else if(input$data.default500 == TRUE && input$data.default110 == TRUE){
+      return(NULL)
     }
     else if(is.null(input$file1)){
       return(NULL)
@@ -564,7 +580,7 @@ server <- function(session, input, output){
   
   
   output$contents <- renderDataTable({
-    data()[,1:9]
+    data()[1:25,1:9]
   })
   
   
