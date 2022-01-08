@@ -35,7 +35,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                 h4('- evaluate the stability of feature subsets and performance of predictive models;'),
                                                 h4('- find information about selected biomarkers (gene ontology, pathways, tissue specificity, miRNA targets, regulatory motif, protein complexes, disease phenotypes) 
                                    in several biological databases.'),
-                                                h4('It can be applied to two-class problems. EnsembleFS is based on several filter feature selection algorithms, such as the test U Manna-Whitneya, 
+                                                h4('It can be applied to two-class problems. EnsembleFS is based on several filter feature selection algorithms, such as the test Manna-Whitneya, 
                                    the Monte Carlo Feature Selection (MCFS), the MultiDimensional Feature Selection (MDFS), and the Minimum Redundancy Maximum Relevance (MRMR) for discovering the most important biomarkers and used the machine learning algorithms to evaluate the quality of feature sets. Predictive models are built using the Random Forest algorithm.'),
                                                 h4('The information about each of the biomarkers is extracted from diverse biological databases, namely the Gene Ontology, the Kyoto Encyclopedia of Genes and Genomes, 
                                    the Reactome, the WikiPathways, the Transfac, the miRNA targets, the Human Protein Atlas, the CORUM, and the Human Phenotype Ontology.'),
