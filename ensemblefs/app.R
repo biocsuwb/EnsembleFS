@@ -113,7 +113,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                 multiple = FALSE,
                                                 accept=c('text/csv', 'text/comma-separated-values,text/plain', '.csv')),
                                       
-                                      
+                                      ###
                                       checkboxInput('data.default110', label = h4('Load demo data 1'), value = FALSE),
                                       
                                       helpText("Note: data size 110 features, and 574 samples; the processing time is around 2 min"),
@@ -121,7 +121,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                       checkboxInput('data.default500', label = h4('Load demo data 2'), value = FALSE),
                                       
                                       helpText("Note: data size 500 features, and 574 samples; the processing time is around 9 min"),
-                           
+                                      ###
                      
                                       numericInput("num",
                                                    label = h4("Column number of decision variable"),
@@ -174,7 +174,8 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                       
                                       radioButtons("cv", label = h4("Validation methods"),
                                                    choices = list("3-fold cross-validation" = 'kfoldcv', "random sample (test set 30%)" = 'rsampling'), 
-                                                   selected = 'kfoldcv', inline = TRUE),
+                                                   selected = 'kfoldcv',
+                                                   inline = TRUE),
                                       
                                       sliderInput("niter", label = h4("Number iteration"), min = 1, max = 30, value = 1),
                                       
@@ -327,7 +328,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                h4('3. Choose the following parameters:'),
                                                h4('--- Feature selection methods: MRMR, MCFS, MDFS-1D'),
                                                h4('--- Multitest correction: fdr'),
-                                               h4('--- MRMR parameter number of significant features: 150'),
+                                               h4('--- MRMR parameter number of significant features: 110'),
                                                h4('--- MCFS parameter cut-off method: k-means'),
                                                h4('--- Correlation coefficient: 0.75'),
                                                h4('--- Validation methods: 3-fold cross-validation'),
@@ -591,7 +592,7 @@ server <- function(session, input, output){
   })
   
   observeEvent(input$Run, {
-    withProgress(message = 'Feature Selection in progress. Please wait ...', {
+    withProgress(message = 'Feature Selection in progress. Please wait ...', value = 0, {
       data <- data()
       nums <- unlist(lapply(data[,-input$num], is.numeric))
       if(input$num > ncol(data)){
@@ -629,42 +630,103 @@ server <- function(session, input, output){
       else{
         start_time <- Sys.time()
         
-        res <-  ensembleFS(x = data[,-input$num],
-                           y = data[,input$num],
-                           methods = input$methods,
-                           method.cv = input$cv,
-                           params.cv = list(niter = input$niter, test.size = 0.3, k = 3),
-                           level.cor = input$level.cor,
-                           params = list(adjust = input$adjust,
-                                         feature.number = input$nvar,
-                                         alpha = 0.05,
-                                         use.cuda = TRUE,
-                                         cutoff.method = c(input$cutoff)),
-                           asm = c(input$methods),
-                           model = c(input$methods)) 
+        x = data[,-input$num]
+        y = data[,input$num]
+        methods = input$methods
+        params.cv = list(niter = input$niter, test.size = 0.3, k = 3)
+        method.cv = input$cv
+        params.cv = list(niter = input$niter, test.size = 0.3, k = 3)
+        level.cor = input$level.cor
+        params = list(adjust = input$adjust,
+                      feature.number = input$nvar,
+                      alpha = 0.05,
+                      use.cuda = TRUE,
+                      cutoff.method = c(input$cutoff))
+        asm = c(input$methods)
+        model = c(input$methods)
         
+        if(level.cor != 1){
+           n <- 4
+        }else{
+          n <- 3
+        }
+        progress_item <- length(methods) * n
         
+      ##################
+        list.index.cross <- cross.val(x, y, method.cv, params.cv)
+        
+        feature.selection.result <- list()
+        for(method in methods){
+          result <- feature.selection.cv(x, y, method, list.index.cross, params = params)
+          feature.selection.result <- append(feature.selection.result, list(result))
+          incProgress(1/progress_item, detail = paste("Doing feuture selection ", substring(method, 4)))
+        }
+        names(feature.selection.result) <- methods
+        if(level.cor != 1){
+          result.uncor.var <- list()
+          for(i in 1:length(feature.selection.result)){
+            result <- corelation.removed(x, feature.selection.result[[i]], list.index.cross, level.cor)
+            result.uncor.var <- append(result.uncor.var, list(result))
+            incProgress(1/progress_item, detail = paste("Doing removing correlated feutures ", substring(method, 4)))
+          }
+          names(result.uncor.var) <- methods
+          feature.selection.result <- result.uncor.var
+        }
+        
+        result.ranking <- data.frame()
+        for(i in 1:length(feature.selection.result)){
+          result <- ranking.feature(feature.selection.result[[i]])
+          result$method <- substring(names(feature.selection.result[i]), 4)
+          result.ranking <- rbind(result.ranking, result)
+        }
+        
+        result_ranking <-reactive({
+          result.ranking
+        }) 
+        
+        stability.selection.result <- data.frame()
+        for(i in 1:length(feature.selection.result)){
+          if(names(feature.selection.result[i]) %in% asm){
+            result <- stability.selection.top.var(feature.selection.result[[i]], list.index.cross)
+            result$method <- substring(names(feature.selection.result[i]), 4)
+            stability.selection.result <- rbind(stability.selection.result, result)
+            incProgress(1/progress_item, detail = paste("Compute stability selection for ", substring(method, 4)))
+          }
+        }
+        
+        result_asm <- reactive({
+          stability.selection.result
+        })
+        
+        metrics.model <- data.frame()
+        for(i in 1:length(feature.selection.result)){
+          if(names(feature.selection.result[i]) %in% model){
+            result <- model.result.top.var(x, y,  feature.selection.result[[i]], list.index.cross)
+            result$method <- substring(names(feature.selection.result[i]), 4)
+            metrics.model <- rbind(metrics.model, result)
+            incProgress(1/progress_item, detail = paste("Build model for ", substring(method, 4)))
+          }
+        }
+        
+        result_model <- reactive({
+          metrics.model
+        })
+        ###############
         end_time <- Sys.time()
+        
         print(end_time - start_time)
+        
+        res <- list(selected.feature = feature.selection.result,
+                    ranking.feature = result.ranking,
+                    stability = stability.selection.result,
+                    model = metrics.model)
         
         result_full <-reactive({
           res
         }) 
         
-        result_ranking <-reactive({
-          res$ranking.feature
-        }) 
-        
-        result_asm <- reactive({
-          res$stability
-        })
-        
         ###add to gene infromation 
         store.result$gene.top <- res$selected.feature
-        
-        result_model <- reactive({
-          res$model
-        })
         
         info_app <- reactive({
           info <- list(methods = input$methods,
@@ -900,12 +962,15 @@ server <- function(session, input, output){
   ###################HELER FUNCTION###################
   funGProfiler = function(rel.var){
     df = list()
+    withProgress(message = 'Get analysis in progress. Please wait ...', value = 0, {
+    n_progress <- length(rel.var)
     for (i in 1:length(rel.var)){
       if(try(is.null(gost(query = rel.var[i]))))next
       all.info = gost(query = rel.var[i])
       df.res = all.info$result
       df[[i]] = data.frame(term = rel.var[i], source = df.res$source, term.ID = df.res$term_id, term.name = df.res$term_name)
-    }
+      incProgress(1/n_progress, detail = paste("Search information for ", rel.var[i]))
+    }})
     df = do.call(rbind,df)
     return(df)
   }
@@ -947,9 +1012,7 @@ server <- function(session, input, output){
   })
   
   observeEvent(input$get.analysis, {
-    withProgress(message = 'Get analysis in progress. Please wait ...', {
       start_time <- Sys.time()
-      
       gene.for.analysis <- store.result$list.gene.analysis
       if(input$condition.methods == 'intersect'){
         var.imp <- Reduce(intersect, gene.for.analysis)
@@ -970,7 +1033,7 @@ server <- function(session, input, output){
       output$graph.venn.result <- renderPlot({
         venn(list.var.source, ilabels = TRUE, zcolor = "style", plotsize = 25, ilcs = 1.2, sncs = 1.2, box = FALSE)
       })
-    })})
+    })
   
   
   select.information.GProfiler = eventReactive(input$typeBase, {
@@ -1006,7 +1069,7 @@ server <- function(session, input, output){
   
   output$save.data <- downloadHandler(
     filename = function() {
-      paste('gene_inforamtion', ".csv", sep = "")
+      paste('gene_information', ".csv", sep = "")
     },
     content = function(file) {
       write.csv(select.information.GProfiler(), file, row.names = FALSE)
