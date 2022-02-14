@@ -213,7 +213,6 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                       sliderInput("geneNumber",
                                                   label = "Top N features with FS filter",
                                                   min = 1, max = 100 , value = 100),
-                                      #choices = list(5,10,15,20,30,40,50,75,100), selected = 100),
                                       helpText("Note: biomarkers are analyzed that occur in at least half of the feature subsets"),
                                       hr(),
                                       uiOutput('checkbox.condition.method'),
@@ -238,7 +237,6 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                       hr(),
                                       uiOutput('save.information'),
                                       hr()
-                                      
                                     ),
                                     
                                     mainPanel(
@@ -248,6 +246,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                       ),
                                       dataTableOutput('information')
                                     )),
+                           
                            tabPanel(h4(' HELP '), icon = icon("question-circle", "fa-2x"), 
                                     tabsetPanel(
                                       type = "tabs",
@@ -314,6 +313,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                uiOutput("url.Lustgarten"),
                                                hr()
                                       ),
+                                      
                                       tabPanel('Tutorial', 
                                                h1(strong('YouTube: EnsembleFS tutorial')),
                                                hr(),
@@ -339,7 +339,6 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                h4('7. Navigate to MODEL ACCURACY tab for the model building results'),
                                                h4('8. Navigate to PLOT to visualize stability results and model building results'),
                                                h4('9. Navigate to DOWNLOAD ZIP tab to download all results as one archive'),
-                                               
                                                hr(),
                                                h3(strong('Searching biological information about biomarkers')),
                                                h4('The process of aggregating information about the most informative biomarkers includes the following steps:'),
@@ -350,6 +349,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                h4('--- Data bases: all'),
                                                h4('3. Press GET ANALYSIS')
                                       ),
+                                      
                                       tabPanel('Example', 
                                                h1(strong('Study experimental dataset')),
                                                h4(uiOutput("tcga.set")),
@@ -363,7 +363,6 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                uiOutput("url.art.luad.1"),
                                                h5('[2] P. Hammerman, M. Lawrence, D. Voet, and et al. Comprehensive genomic characterization of squamous cell lung cancers. Nature, 489 (2012) 519-525.'),
                                                uiOutput("url.art.luad.2"),
-                                               
                                                hr(),
                                                h1(strong("Defining the input parameters")),
                                                hr(),
@@ -376,7 +375,6 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                h4('--- Correlation coefficient: 0.75'),
                                                h4('--- Validation methods: percentage split (test set 30%)'),
                                                h4('--- Number of repetitions: 10'),
-                                               
                                                hr(),
                                                h3(strong('GENE INFORMATION tab')),
                                                h4('--- Number of relevant biomarkers, Top N features with FS filter: 100'),
@@ -385,7 +383,6 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                hr(),
                                                h3(strong('Note:')),
                                                h4('Execution time for the feature selection algorithm, the random forest classification, and the biological information searching in databases for this dataset is around XXX min.'), 
-                                               
                                                hr(),
                                                h1(strong("Results")),
                                                hr(),
@@ -435,6 +432,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                helpText("Note: Computation time for random sample (test set 30%) and 10 iterations: 28.67991 mins")
                                       )
                                     )),
+                           
                            tabPanel(h4('Licence Information'), icon = icon("file-alt", "fa-2x"),
                                     h2('Availability and requirements:'),
                                     hr(),
@@ -459,10 +457,8 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                     h4(strong('Any restrictions to use by non-academics:')),
                                     h4('None.'),
                                     hr(),
-                                    h4(strong('Source code is available from GitHub (https://github.com/biocsuwb/EnsembleFS) and is free open source software under an MIT license.'))
-                           )
-                           
-                ))
+                                    h4(strong('Source code is available from GitHub (https://github.com/biocsuwb/EnsembleFS) and is free open source software under an MIT license.')))))
+
 
 server <- function(session, input, output){
   
@@ -495,7 +491,6 @@ server <- function(session, input, output){
   output$url.art.luad.2 = renderUI({
     tagList("DOI:", url.art.luad.2)
   })
-  
   
   output$tcga.set = renderUI({
     tagList("The RNA-sequencing data of tumor-adjacent normal tissues of lung adenocarcinoma cancer patients [1], [2] from The Cancer Genome Atlas database (TCGA)", url.tcga, "was used.")
@@ -549,25 +544,24 @@ server <- function(session, input, output){
   output$home.url <- renderUI({
     tagList("The R package of EnsembleFS is available ", url_package)
   })
-  #####################  
+  
   output$info.load.main.data <- renderText({"Please select a data set"})
   
-  
   data <- reactive({
-    if(is.null(input$file1) && input$data.default500 == TRUE){
-      read.csv2('www/LUAD_test_dataset_500samples.csv', check.names = FALSE)
+    if(input$data.default500 == TRUE && input$data.default110 == TRUE){
+        return(NULL)
+      }
+    else if(is.null(input$file1) && input$data.default500 == TRUE){
+      read.csv2('www/LUAD_test_dataset_500samples.csv')
     }
     else if(!is.null(input$file1) && input$data.default500 == TRUE){
-      read.csv2('www/LUAD_test_dataset_500samples.csv', check.names = FALSE)
+      read.csv2('www/LUAD_test_dataset_500samples.csv')
     }
     else if(is.null(input$file1) && input$data.default110 == TRUE){
-      read.csv2('www/LUAD_test_dataset_110features.csv', check.names = FALSE)
+      read.csv2('www/LUAD_test_dataset_110features.csv')
     }
     else if(!is.null(input$file1) && input$data.default110 == TRUE){
-      read.csv2('www/LUAD_test_dataset_110features.csv', check.names = FALSE)
-    }
-    else if(input$data.default500 == TRUE && input$data.default110 == TRUE){
-      return(NULL)
+      read.csv2('www/LUAD_test_dataset_110features.csv')
     }
     else if(is.null(input$file1)){
       return(NULL)
@@ -579,11 +573,9 @@ server <- function(session, input, output){
     }
   })
   
-  
   output$contents <- renderDataTable({
     data()[1:25,1:9]
   })
-  
   
   output$run <- renderUI({
     if(!is.null(data()) && length(input$methods) != 0 && length(input$cv)){
@@ -592,7 +584,7 @@ server <- function(session, input, output){
   })
   
   observeEvent(input$Run, {
-    withProgress(message = 'Feature Selection in progress. Please wait ...', value = 0, {
+    withProgress(message = 'Feature Selection in progress. Please wait: ', value = 0, {
       data <- data()
       nums <- unlist(lapply(data[,-input$num], is.numeric))
       if(input$num > ncol(data)){
@@ -635,7 +627,6 @@ server <- function(session, input, output){
         methods = input$methods
         params.cv = list(niter = input$niter, test.size = 0.3, k = 3)
         method.cv = input$cv
-        params.cv = list(niter = input$niter, test.size = 0.3, k = 3)
         level.cor = input$level.cor
         params = list(adjust = input$adjust,
                       feature.number = input$nvar,
@@ -652,14 +643,13 @@ server <- function(session, input, output){
         }
         progress_item <- length(methods) * n
         
-      ##################
         list.index.cross <- cross.val(x, y, method.cv, params.cv)
         
         feature.selection.result <- list()
         for(method in methods){
           result <- feature.selection.cv(x, y, method, list.index.cross, params = params)
           feature.selection.result <- append(feature.selection.result, list(result))
-          incProgress(1/progress_item, detail = paste("Doing feuture selection ", substring(method, 4)))
+          incProgress(1/progress_item, detail = paste("Doing feature selection ", substring(method, 4)))
         }
         names(feature.selection.result) <- methods
         if(level.cor != 1){
@@ -667,7 +657,7 @@ server <- function(session, input, output){
           for(i in 1:length(feature.selection.result)){
             result <- corelation.removed(x, feature.selection.result[[i]], list.index.cross, level.cor)
             result.uncor.var <- append(result.uncor.var, list(result))
-            incProgress(1/progress_item, detail = paste("Doing removing correlated feutures ", substring(method, 4)))
+            incProgress(1/progress_item, detail = paste("Removing correlated features ", substring(method, 4)))
           }
           names(result.uncor.var) <- methods
           feature.selection.result <- result.uncor.var
@@ -711,7 +701,7 @@ server <- function(session, input, output){
         result_model <- reactive({
           metrics.model
         })
-        ###############
+
         end_time <- Sys.time()
         
         print(end_time - start_time)
@@ -725,7 +715,6 @@ server <- function(session, input, output){
           res
         }) 
         
-        ###add to gene infromation 
         store.result$gene.top <- res$selected.feature
         
         info_app <- reactive({
@@ -737,8 +726,6 @@ server <- function(session, input, output){
                        number.repeats = input$niter)
         })
         
-        
-        ## PLOT ASM
         plotly.reult.asm = reactive({
           data = result_asm()
           
@@ -751,7 +738,6 @@ server <- function(session, input, output){
             theme(legend.position = "bottom")
         })
         
-        ## PLOT ACC
         plotly.reult.acc = reactive({
           data = result_model()
           
@@ -764,7 +750,6 @@ server <- function(session, input, output){
             theme(legend.position = "bottom")
         })
         
-        ## PLOT AUC
         plotly.reult.auc = reactive({
           data = result_model()
           
@@ -777,7 +762,6 @@ server <- function(session, input, output){
             theme(legend.position = "bottom")
         })
         
-        ## PLOT MCC
         plotly.reult.mcc = reactive({
           data = result_model()
           
@@ -789,7 +773,6 @@ server <- function(session, input, output){
             theme_light()+
             theme(legend.position = "bottom")
         })
-        
         
         output$ranking <- renderDataTable(result_ranking())
         
@@ -805,7 +788,6 @@ server <- function(session, input, output){
         
         output$plot.model.mcc <- renderPlotly(plotly.reult.mcc())
         
-        #render download button
         output$downloadAsm <- renderUI({
           if(!is.null(result_asm())){
             downloadButton('download_asm', 'Download CSV')
@@ -824,7 +806,6 @@ server <- function(session, input, output){
           }
         })
         
-        ####
         output$downloadRanking <- renderUI({
           if(!is.null(result_ranking())){
             downloadButton('download_ranking', 'Download CSV')
@@ -837,7 +818,6 @@ server <- function(session, input, output){
           }
         })
         
-        ###
         #download handler
         output$download_asm <- downloadHandler(
           filename = function() {
@@ -848,7 +828,6 @@ server <- function(session, input, output){
           }
         )
         
-        
         output$download_ranking <- downloadHandler(
           filename = function() {
             paste('ranking', ".csv", sep = "")
@@ -857,7 +836,6 @@ server <- function(session, input, output){
             write.csv(result_ranking(), file, row.names = FALSE)
           }
         )
-        
         
         output$download_model <- downloadHandler(
           filename = function() {
@@ -876,8 +854,7 @@ server <- function(session, input, output){
             write.csv(result_info(), file, row.names = FALSE)
           }
         )
-        
-        
+      
         output$download_plot = downloadHandler(
           filename = 'result.pdf',
           content = function(file) {
@@ -890,8 +867,6 @@ server <- function(session, input, output){
             dev.off()
           })
         
-        
-        
         output$download_zip <- downloadHandler(
           filename = function() {
             paste("output", "zip", sep=".")
@@ -900,31 +875,24 @@ server <- function(session, input, output){
             tmpdir <- tempdir()
             setwd(tempdir())
             print(tempdir())
-            
             fs <- c("info.txt","ranking.csv", "stability.csv", "model.csv",
                     "utest.txt", "mcfs.txt", "mdfs1d.txt", "mdfs2d.txt", "mrmr.txt", "full_result.RData", "result.pdf")
-            
             writeLines(deparse(info_app()), "info.txt")
-            
             write.csv(result_ranking(), file = "ranking.csv")
             write.csv(result_asm(), file = "stability.csv")
             write.csv(result_model(), file = "model.csv")
-            
             writeLines(deparse(fs.utest), "utest.txt")
             writeLines(deparse(fs.mcfs), "mcfs.txt")
             writeLines(deparse(fs.mdfs.1D), "mdfs1d.txt")
             writeLines(deparse(fs.mdfs.2D), "mdfs2d.txt")
             writeLines(deparse(fs.mrmr), "mrmr.txt")
-            
             save(res, file = "full_result.RData")
-            
             pdf('result.pdf')
             arrangeGrob(print(plotly.reult.asm()),
                         print(plotly.reult.acc()), 
                         print(plotly.reult.auc()),
                         print(plotly.reult.mcc(), ncol = 4))  
             dev.off()
-            
             print (fs)
             zip(zipfile=filename, files=fs)
           },
@@ -941,7 +909,6 @@ server <- function(session, input, output){
       paste("Data from the FEATURE SELECTION (relevant biomarkers) was load")
     }
   })
-  
   
   output$checkbox.condition.method <- renderUI({
     if(length(store.result$gene.top) != 0){
@@ -962,7 +929,7 @@ server <- function(session, input, output){
   ###################HELER FUNCTION###################
   funGProfiler = function(rel.var){
     df = list()
-    withProgress(message = 'Get analysis in progress. Please wait ...', value = 0, {
+    withProgress(message = 'Get analysis in progress. Please wait: ', value = 0, {
     n_progress <- length(rel.var)
     for (i in 1:length(rel.var)){
       if(try(is.null(gost(query = rel.var[i]))))next
@@ -974,7 +941,7 @@ server <- function(session, input, output){
     df = do.call(rbind,df)
     return(df)
   }
-  ###
+ 
   ranking.var <- function(list.imp.var, level.freq, n){
     result <- c()
     name.method <- c()
@@ -1075,7 +1042,6 @@ server <- function(session, input, output){
       write.csv(select.information.GProfiler(), file, row.names = FALSE)
     }
   )
-  
   
 }
 
