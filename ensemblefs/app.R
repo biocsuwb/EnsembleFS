@@ -317,7 +317,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                       tabPanel('Tutorial', 
                                                h1(strong('YouTube: EnsembleFS tutorial')),
                                                hr(),
-                                               HTML('<iframe width="800" height="400" src="https://www.youtube.com/embed/R_fgzQAMrJA" frameborder="0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen"></iframe>'),
+                                               HTML('<iframe width="800" height="400" src="https://www.youtube.com/embed/oWjPz7ZpHeo" frameborder="0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen"></iframe>'),
                                                h1(strong('A short workflow')),
                                                hr(),
                                                
