@@ -42,7 +42,8 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                 h4(strong('For details on feature selection and classification algorithms, please refer to the Help -> Terminology')),
                                                 hr(),
                                                 h4('The proposed tool accept molecular data includes different types of gene identifiers, such as Ensembl, NCBI Entrez gene ID, Refseq, Illumina, and Uniprot.'),
-                                                h4('Computation time does not scale with the type of molecular data. Execution time of the task strong depends on the size of the dataset, the number of training iterations, as well as the type and number of feature filters. For example, the processing time is around XXX min for sample size 574, and 2000 probes.'),
+                                                h4('Computation time does not scale with the type of molecular data. Execution time of the task strong depends on the size of the dataset, the number of training iterations, as well as the type and number of feature filters. For example, the processing time is around 29 min for sample size 574, and 2000  features (model with default parameters).'),
+                                                h4(strong('Note: a maximum input file size is limited to 200 MB. ')),
                                                 h1(strong('Overview')),
                                                 hr(),
                                                 img(src="Overview_func.png", align = "center",height='1500px',width='1200px'),
@@ -247,7 +248,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                       dataTableOutput('information')
                                     )),
                            
-                           tabPanel(h4(' HELP '), icon = icon("question-circle", "fa-2x"), 
+                           tabPanel(h4(' HELP '), icon = icon("question-circle", "fa-2x", verify_fa = FALSE), 
                                     tabsetPanel(
                                       type = "tabs",
                                       tabPanel('Terminology', 
@@ -317,17 +318,17 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                       tabPanel('Tutorial', 
                                                h1(strong('YouTube: EnsembleFS tutorial')),
                                                hr(),
-                                               HTML('<iframe width="800" height="400" src="https://www.youtube.com/embed/oWjPz7ZpHeo" frameborder="0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen"></iframe>'),
+                                               HTML('<iframe width="800" height="400" src="https://www.youtube.com/embed/ENf3LEMb56E" frameborder="0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen"></iframe>'),
                                                h1(strong('A short workflow')),
                                                hr(),
                                                
-                                               h3(strong('The Ensemble feature selection process')),
+                                               h3(strong('Ensemble feature selection process')),
                                                h4('The process of the selection of the most informative biomarkers includes the following steps:'),
                                                h4('1. Navigate to the FEATURE SELECTION tab.'),
-                                               h4('2. Load csv/txt file (separator = ";", decimal = ",") and enter the column number for the binary decision variable'),
+                                               h4('2. Load csv file or txt file (separator = ";", decimal = ",") and enter the column number for the binary decision variable'),
                                                h4('3. Choose the following parameters:'),
-                                               h4('--- Feature selection methods: MRMR, MCFS, MDFS-1D'),
-                                               h4('--- Multitest correction: fdr'),
+                                               h4('--- Feature selection methods: U-test, MRMR, MCFS, MDFS-1D, MDFS-2D'),
+                                               h4('--- Multitest correction for U-test, MDFS-1D and MDFS-1D: fdr'),
                                                h4('--- MRMR parameter number of significant features: 110'),
                                                h4('--- MCFS parameter cut-off method: k-means'),
                                                h4('--- Correlation coefficient: 0.75'),
@@ -339,6 +340,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                h4('7. Navigate to MODEL ACCURACY tab for the model building results'),
                                                h4('8. Navigate to PLOT to visualize stability results and model building results'),
                                                h4('9. Navigate to DOWNLOAD ZIP tab to download all results as one archive'),
+                                               
                                                hr(),
                                                h3(strong('Searching biological information about biomarkers')),
                                                h4('The process of aggregating information about the most informative biomarkers includes the following steps:'),
@@ -349,78 +351,100 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                h4('--- Data bases: all'),
                                                h4('3. Press GET ANALYSIS')
                                       ),
-                                      
                                       tabPanel('Example', 
-                                               h1(strong('Study experimental dataset')),
+                                               h1(strong('Example of use case')),
                                                h4(uiOutput("tcga.set")),
                                                h4('The preprocessing of data involved standard steps for RNA-Seq data. The log2 transformation was performed. Features with zero and near-zero (1%) variance across patients were removed. '), 
                                                h4('After the preprocessing procedure the primary dataset contains 574 samples (59 normal and 515 tumor) described with 20172 differentially expressed genes (DEGs). This dataset includes '),
-                                               h4('highly correlated features and the number of cancer samples is roughly ten times more than normal samples. For testing purposes, the number of probes was limited to 500 DEGs with the '),
+                                               h4('highly correlated features and the number of cancer samples is roughly ten times more than normal samples. For testing purposes, 
+                                                  the number of probes was limited to 500 DEGs with the '),
                                                h4('highest difference in the gene expression level between tumor and normal tissues.'),
-                                               h4(uiOutput("data.sample.set")),
+                                               uiOutput("data.sample.set.1"),
                                                hr(),
                                                h5('[1] E. Collisson, J. Campbell, A. Brooks, and et al. Comprehensive molecular profiling of lung adenocarcinoma. Nature, 511 (2014), 543-550.'),
                                                uiOutput("url.art.luad.1"),
                                                h5('[2] P. Hammerman, M. Lawrence, D. Voet, and et al. Comprehensive genomic characterization of squamous cell lung cancers. Nature, 489 (2012) 519-525.'),
                                                uiOutput("url.art.luad.2"),
+                                               
                                                hr(),
                                                h1(strong("Defining the input parameters")),
                                                hr(),
                                                h3(strong('FEATURE SELECTION tab')),
-                                               h4('--- Please select a data set: Load demo data'),
+                                               h4(uiOutput("data.sample.set.2")),
+                                               img(src="Fig_exampleData.png", align = "center",height='180px',width='880px'),
+                                               h4('--- Column number of binary decision variable: 1'),
                                                h4('--- Feature selection methods: U-test, MRMR, MCFS, MDFS-1D, MDFS-2D'),
                                                h4('--- Multitest correction: fdr'),
                                                h4('--- MRMR parameter number of significant features: 150'),
                                                h4('--- MCFS parameter cut-off method: k-means'),
                                                h4('--- Correlation coefficient: 0.75'),
-                                               h4('--- Validation methods: percentage split (test set 30%)'),
+                                               h4('--- Validation methods: random sample (test set 30%)'),
                                                h4('--- Number of repetitions: 10'),
+                                               
                                                hr(),
                                                h3(strong('GENE INFORMATION tab')),
-                                               h4('--- Number of relevant biomarkers, Top N features with FS filter: 100'),
+                                               h4('--- Number of relevant biomarkers, Top N features with FS filter: 50'),
                                                h4('--- Combination of a set of biomarkers: union'),
                                                h4('--- Data bases: all'),
                                                hr(),
                                                h3(strong('Note:')),
-                                               h4('Execution time for the feature selection algorithm, the random forest classification, and the biological information searching in databases for this dataset is around XXX min.'), 
+                                               h4('Execution time for the feature selection algorithm, the random forest classification, and the biological information searching in databases for this dataset is around 30 min.'), 
+                                               
                                                hr(),
                                                h1(strong("Results")),
                                                hr(),
-                                               h3(strong('1. Informative biomarkers from the individual feature selection methods')),
-                                               img(src="Fig_Rank_list_biomarkers_table.png", align = "center",height='450px',width='1450px'),
+                                               h3(strong('1. Informative biomarkers from the individual feature selection methods (RANKING LIST sub-tab)')),
+                                               h4('Herein, we can sort and filter all informative biomarkers by name, frequency of feature occurrence among the 10 ranked lists, and FS method.'),
+                                               img(src="Fig_Rank_list_biomarkers_table.png", align = "center",height='450px',width='1400px'),
                                                h4('Table 1. A part of the result of the rank list of relevant biomarkers from each of the feature selection methods, where a frequency is the number of occurrences of the biomarker in the 10 obtained feature subsets.'),
                                                hr(),
-                                               h3(strong('2. Stability of informative biomarker subsets')),
+                                               h3(strong('2. Stability of informative biomarker subsets (FS STABILITY sub-tab)')),
                                                h4('One of the most important property of a feature selection method is stability that describes to robustness of the selected features to perturbations in the data. Table 2. shows some of the results of '),
-                                               h4('the sensitivity of feature selection algorithms to variations in the training sets for studied data'),
-                                               img(src="Fig_ASM_table.png", align = "center",height='500px',width='1500px'),
+                                               h4('the sensitivity of feature selection algorithms to variations in the training sets for studied data. Herein, we can sort and filter the ASM metric by ASM value, N-top features used to build predictive model, and FS method.'),
+                                               img(src="Fig_ASM_table.png", align = "center",height='500px',width='1550px'),
                                                h4('Table 2. A part of the result of the stability of the 10 feature subsets composed of N-top uncorrelated features for all feature filters. The value of the stability of feature ranking method is expressed by the Lustgarten'),
                                                h4('stability measure (ASM)'),
                                                hr(),
-                                               h3(strong('3. Model accuracy')),
-                                               img(src="Fig_ACC_AUC_MCC_table.png", align = "center",height='500px',width='1600px'),
+                                               h3(strong('3. Model accuracy (MODEL ACCURACY sub-tab)')),
+                                               img(src="Fig_ACC_AUC_MCC_table.png", align = "center",height='500px',width='1500px'),
                                                h4('Table 3. A part of the result of the predictive power of random forest models trained on top N features with different feature filters, where ACC is accuracy, AUC is the area under the ROC curve,'),
                                                h4('and MCC is the Matthews correlation coefficient.'),
                                                hr(),
-                                               h3(strong('4. Model comparison plots')),
+                                               h3(strong('4. Model comparison plots (PLOTS sub-tab)')),
+                                               h4('Optimization and evaluation of the feature selection process are important for choosing the final feature set. To evaluate the quality of the models, we can use three metrics: ACC, AUC, and MCC.'),
+                                               h4('While to evaluate the stability of selected feature sets, we use the ASM metric. To optimize our ML models, we compare ACC(N), AUC(N), MCC(N), and ASM(N) curves and identify the optimal number of variables (N) for the RF classifier.'),
+                                               h4('Also, we can easily compare the predictive performance of models and the stability of selected feature sets for individual FS algorithms, by using interactive plots.'),
                                                img(src="Fig_plots_ACC_AUC_MCC_ASM.png", align = "center",height='1100px',width='1500px'),
                                                h4('Fig 1. The average values for ACC, AUC, and MCC vs N top features for all features filters. ASM similarity measure between 10 feature subsets vs N top features.'),
                                                hr(),
-                                               h3(strong('5. Key biomarkers')),
-                                               img(src="Fig_Venn_plot_gene_information.png", align = "center",height='500px',width='1600px'),
+                                               h4('For example, the following analyses we can perform for each individual FS filter:'),
+                                               h4(' - How many uncorrelated variables should be included in the model to obtain the best classification with Random Forest ?'),
+                                               h4(' - Which feature selection algorithm returns the best sets of variables ?'),
+                                               h4('- How stable is the stability measure for top-N feature subsets ?'),
+                                               h4('- How effective is the predictive model for top-N feature subsets ?'),
+                                               h4('- How stable are model performance metrics for top-N feature subsets ?'),                                               
+                                               hr(), 
+                                               h4('In the case of TCGA-LUAD data, due to the high performance of the prediction models (ACC were higher than 98.9%, and MCC were higher than 95.1% for all FS methods), the top 50 features from each FS algorithm were used for further analysis.'),
+                                               hr(), 
+                                               h3(strong('5. Key biomarkers (GENE INFORMATION tab)')),
+                                               img(src="Fig_Venn_plot_gene_information.png", align = "center",height='500px',width='1300px'),
                                                h4('Fig 2. Left panel: the number of the most relevant biomarkers with all feature selection methods. Right panel: the number of annotated biomarkers in the biological databases'),
                                                hr(),
-                                               h3(strong('6. Biological gene information collection')),
+                                               h3(strong('6. Biological gene information collection (GENE INFORMATION tab)')),
                                                h4('The information assigned to gene is presented in tabular format, wherein the type of display information can be set. For each biomarker, the following biological information is obtained from databases: the molecular function, the cellular component, '),
                                                h4('and the biological process (the Gene Ontology database), the pathways (the Kyoto Encyclopedia of Genes and Genomes, the Reactome, and WikiPathways databases), and the human disease phenotypes (the Human Phenotype Ontology database). '),
                                                h4('the regulatory motif (the Transfac database), the miRNA targets (the miRTarBase database), the tissue specificity (the Human Protein Atlas database), the protein complexes (the CORUM database), and WikiPathways database  '),
-                                               h4('for selected biomarker, respectively. The Table 4 and Table 5 contain an example of database information from the Gene Ontology database  '),
-                                               img(src="Fig_gene_information_table1.png", align = "center",height='550px',width='1550px'),
-                                               h4('Table 4. Biological process annotation from the Gene Ontology database.'),
-                                               img(src="Fig_gene_information_table2.png", align = "center",height='550px',width='1550px'),
-                                               h4('Table 5. The pathways annotation from the WikiPathways database.'),
+                                               h4('for selected biomarker, respectively. The Table 4-7 contain an example of database information from selected databases.'),
+                                               img(src="Fig_gene_information_table1.png", align = "center",height='600px',width='1200px'),
+                                               h4('Table 4. Molecular function annotation from the Gene Ontology database.'),
+                                               img(src="Fig_gene_information_table2.png", align = "center",height='600px',width='1200px'),
+                                               h4('Table 5. Biological process annotation from the Gene Ontology database.'),
+                                               img(src="Fig_gene_information_table3.png", align = "center",height='600px',width='1200px'),
+                                               h4('Table 6. The pathways annotation from the WikiPathways database.'),
+                                               img(src="Fig_gene_information_table4.png", align = "center",height='600px',width='1200px'),
+                                               h4('Table 7. The pathways annotation from the Human Protein Atlas database.'),
                                                hr(),
-                                               h3(strong('7. Report of feature selection and modeling results ')),
+                                               h3(strong('7. Report of feature selection and modeling results (GENE INFORMATION tab) ')),
                                                h4("The files contain: "),
                                                h4(" - info.txt - used parameters for the ensemble feature selection;"),
                                                h4(" - ranking.csv - set of most informative biomarkers;"),
@@ -433,7 +457,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                       )
                                     )),
                            
-                           tabPanel(h4('Licence Information'), icon = icon("file-alt", "fa-2x"),
+                           tabPanel(h4('Licence Information'), icon = icon("file-alt", "fa-2x", verify_fa = FALSE),
                                     h2('Availability and requirements:'),
                                     hr(),
                                     h4(strong('Project name:')),
@@ -462,18 +486,23 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
 
 server <- function(session, input, output){
   
-  options(shiny.maxRequestSize=200*1024^2)
+  LIMIT.NUMBER.COLUMNS = FALSE
+  MAX.SIZE.FILE = 30 #MB
+  USE.CUDA = FALSE #to accelerate processing by using a CUDA GPU the EnsembleFS for MDFS2D, package must be compiled with CUDA
+  MAX.SHOWING.COLUMNS = 9 # only showing, the calculation will be made on the full data
+  MAX.SHOWING.ROWS = 25   # only showing, the calculation will be made on the full data
+  
+  options(shiny.maxRequestSize=MAX.SIZE.FILE*1024^2)
   
   store.result <- reactiveValues(gene.top = list(),
                                  list.gene.analysis = list(),
                                  result.gene.info = data.frame())
   
   url_app = a("here", href = "https://github.com/biocsuwb/EnsembleFS")
-  url_package = a("here", href = "https://github.com/biocsuwb/EnsembleFS-pacakge")
+  url_package = a("here", href = "https://github.com/biocsuwb/EnsembleFS-package")
   email= a("here", href = 'http://matinf.uwb.edu.pl/pl/wydzial/kadra/pracownikii.php?cID=180')
   url.art.EnsembleFS = a('10.1007/978-3-030-50420-5_39', href = "https://link.springer.com/chapter/10.1007%2F978-3-030-50420-5_39")
   url.tcga = a('https://www.cancer.gov/tcga', href = "https://www.cancer.gov/tcga")
-  url.data.sample = a('https://www.cancer.gov/tcga', href = "https://www.cancer.gov/tcga")
   url.art.MDFS = a('10.1016/j.ins.2020.03.024', href = "https://www.sciencedirect.com/science/article/abs/pii/S0020025520302048?via%3Dihub")
   url.art.MCFS = a('10.1093/bioinformatics/btm486', href = 'https://academic.oup.com/bioinformatics/article/24/1/110/204931?login=true')
   url.art.MRMR =  a('10.1142/S0219720005001004' , href ="https://www.worldscientific.com/doi/abs/10.1142/S0219720005001004") 
@@ -482,7 +511,6 @@ server <- function(session, input, output){
   url.data.sample = a('https://github.com/biocsuwb/EnsembleFS/tree/main/data_test', href = "https://github.com/biocsuwb/EnsembleFS/tree/main/data_test")
   url.art.luad.1 = a('10.1038/nature13385', href = "https://www.nature.com/articles/nature13385")
   url.art.luad.2 = a('10.1038/nature11404', href = "https://www.nature.com/articles/nature11404")
-  
   
   output$url.art.luad.1 = renderUI({
     tagList("DOI:", url.art.luad.1)
@@ -496,8 +524,12 @@ server <- function(session, input, output){
     tagList("The RNA-sequencing data of tumor-adjacent normal tissues of lung adenocarcinoma cancer patients [1], [2] from The Cancer Genome Atlas database (TCGA)", url.tcga, "was used.")
   })
   
-  output$data.sample.set = renderUI({
+  output$data.sample.set.1 = renderUI({
     tagList("Using the GitHub link: ",url.data.sample,"these example dataset can be downloaded.")
+  })
+  
+  output$data.sample.set.2 = renderUI({
+    tagList("--- Please select a data set: load demo data 2 or load exampleData.csv (link: ",url.data.sample,")")
   })
   
   output$home.email <- renderUI({
@@ -515,7 +547,6 @@ server <- function(session, input, output){
   output$url.article = renderUI({
     tagList(h4("DOI:", url.art))
   })
-  
   
   output$url.MCFS = renderUI({
     tagList("DOI:", url.art.MCFS)
@@ -544,7 +575,7 @@ server <- function(session, input, output){
   output$home.url <- renderUI({
     tagList("The R package of EnsembleFS is available ", url_package)
   })
-  
+  #####################  
   output$info.load.main.data <- renderText({"Please select a data set"})
   
   data <- reactive({
@@ -566,15 +597,36 @@ server <- function(session, input, output){
     else if(is.null(input$file1)){
       return(NULL)
     }
-    else{ 
-      data <- read.csv2(input$file1$datapath, check.names = FALSE)
+    else{
+      if(LIMIT.NUMBER.COLUMNS){
+      data <- read.table(input$file1$datapath, sep = ';', dec = ',', check.names = FALSE, header = TRUE)
+      if(ncol(data) > 5001){
+        showModal(modalDialog(
+          title = "Data is large",
+          "Many features in the data, please select data that contains up to 5000 features!"
+        ))
+        return(NULL)
+      }
+      else{
+        output$info.load.main.data <- renderText({""})
+        return(data)
+      }
+    }else{
+      data <- read.table(input$file1$datapath, sep = ';', dec = ',', check.names = FALSE, header = TRUE)
       output$info.load.main.data <- renderText({""})
-      return(data)  
+      return(data)
     }
+  }
   })
-  
+
   output$contents <- renderDataTable({
-    data()[1:25,1:9]
+    if(!is.null(data())){ 
+    if(nrow(data()) > MAX.SHOWING.ROWS | ncol(data()) > MAX.SHOWING.COLUMNS)
+      data()[1:MAX.SHOWING.ROWS,1:MAX.SHOWING.COLUMNS]
+    else{
+      data()
+    }
+    }
   })
   
   output$run <- renderUI({
@@ -631,7 +683,7 @@ server <- function(session, input, output){
         params = list(adjust = input$adjust,
                       feature.number = input$nvar,
                       alpha = 0.05,
-                      use.cuda = TRUE,
+                      use.cuda = USE.CUDA,
                       cutoff.method = c(input$cutoff))
         asm = c(input$methods)
         model = c(input$methods)
@@ -647,17 +699,17 @@ server <- function(session, input, output){
         
         feature.selection.result <- list()
         for(method in methods){
+          incProgress(1/progress_item, detail = paste("Doing feature selection ", substring(method, 4)))
           result <- feature.selection.cv(x, y, method, list.index.cross, params = params)
           feature.selection.result <- append(feature.selection.result, list(result))
-          incProgress(1/progress_item, detail = paste("Doing feature selection ", substring(method, 4)))
         }
         names(feature.selection.result) <- methods
         if(level.cor != 1){
           result.uncor.var <- list()
           for(i in 1:length(feature.selection.result)){
+            incProgress(1/progress_item, detail = paste("Removing correlated features ", substring(method, 4)))
             result <- corelation.removed(x, feature.selection.result[[i]], list.index.cross, level.cor)
             result.uncor.var <- append(result.uncor.var, list(result))
-            incProgress(1/progress_item, detail = paste("Removing correlated features ", substring(method, 4)))
           }
           names(result.uncor.var) <- methods
           feature.selection.result <- result.uncor.var
@@ -677,10 +729,10 @@ server <- function(session, input, output){
         stability.selection.result <- data.frame()
         for(i in 1:length(feature.selection.result)){
           if(names(feature.selection.result[i]) %in% asm){
+            incProgress(1/progress_item, detail = paste("Compute stability selection for ", substring(method, 4)))
             result <- stability.selection.top.var(feature.selection.result[[i]], list.index.cross)
             result$method <- substring(names(feature.selection.result[i]), 4)
             stability.selection.result <- rbind(stability.selection.result, result)
-            incProgress(1/progress_item, detail = paste("Compute stability selection for ", substring(method, 4)))
           }
         }
         
@@ -691,10 +743,10 @@ server <- function(session, input, output){
         metrics.model <- data.frame()
         for(i in 1:length(feature.selection.result)){
           if(names(feature.selection.result[i]) %in% model){
+            incProgress(1/progress_item, detail = paste("Build model for ", substring(method, 4)))
             result <- model.result.top.var(x, y,  feature.selection.result[[i]], list.index.cross)
             result$method <- substring(names(feature.selection.result[i]), 4)
             metrics.model <- rbind(metrics.model, result)
-            incProgress(1/progress_item, detail = paste("Build model for ", substring(method, 4)))
           }
         }
         
@@ -962,7 +1014,6 @@ server <- function(session, input, output){
     names(result) <- name.method
     return(result)
   }
-  #####################################################
   
   venn.for.methods <- eventReactive(input$geneNumber, {
     if(length(store.result$gene.top) != 0){
@@ -987,6 +1038,7 @@ server <- function(session, input, output){
       else if(input$condition.methods == 'union'){
         var.imp <- unique(unlist(gene.for.analysis))}
       result <-  funGProfiler(var.imp)
+      if(!is.null(result)){ 
       store.result$result.gene.info <- result
       name.source <- unique(result$source)
       list.var.source <- c()
@@ -1000,8 +1052,13 @@ server <- function(session, input, output){
       output$graph.venn.result <- renderPlot({
         venn(list.var.source, ilabels = TRUE, zcolor = "style", plotsize = 25, ilcs = 1.2, sncs = 1.2, box = FALSE)
       })
+      }
+      else{
+        showModal(modalDialog(
+          title = "No results to show!"
+        ))
+      }
     })
-  
   
   select.information.GProfiler = eventReactive(input$typeBase, {
     if(nrow(store.result$result.gene.info) != 0){
@@ -1027,7 +1084,6 @@ server <- function(session, input, output){
       select.information.GProfiler(),
       options = list(pageLength = 5))
   
-  
   output$save.information <- renderUI({
     if(!is.null(select.information.GProfiler())){
       downloadButton('save.data', 'Save')
@@ -1042,7 +1098,6 @@ server <- function(session, input, output){
       write.csv(select.information.GProfiler(), file, row.names = FALSE)
     }
   )
-  
 }
 
 shinyApp(ui = ui, server = server)
