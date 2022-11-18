@@ -1,0 +1,21 @@
+function (x, y, params = list(adjust = "holm", alpha = 0.05, 
+    use.cuda = FALSE)) 
+{
+    if (!is.data.frame(x)) 
+        data = as.data.frame(x)
+    dim0 = 2
+    div0 = 1
+    adjust = params$adjust
+    use.cuda = params$use.cuda
+    alpha = params$alpha
+    result = MDFS(data = x, decision = y, dimensions = dim0, 
+        divisions = div0, use.CUDA = use.cuda, p.adjust.method = adjust)
+    var.names = names(x)
+    index.imp = RelevantVariables(result$MDFS, level = alpha, 
+        p.adjust.method = adjust)
+    var.imp.frame = data.frame(name = var.names, Pvalue = result$p.value, 
+        adjustPvalue = result$adjusted.p.value)[index.imp, ]
+    var.imp = var.imp.frame[order(var.imp.frame$adjustPvalue, 
+        decreasing = F), ]
+    return(var.imp)
+}

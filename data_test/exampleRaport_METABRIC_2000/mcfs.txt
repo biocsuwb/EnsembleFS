@@ -1,0 +1,20 @@
+function (x, y, params = list(cutoff.method = c("kmeans"))) 
+{
+    if (!is.data.frame(x)) 
+        x = as.data.frame(x)
+    old.names <- colnames(x)
+    colnames(x) <- 1:ncol(x)
+    x$class <- y
+    result <- mcfs(class ~ ., x, projections = "auto", projectionSize = "auto", 
+        featureFreq = 150, splits = 5, splitSetSize = 1000, balance = "auto", 
+        cutoffMethod = params$cutoff.method, cutoffPermutations = 20, 
+        buildID = TRUE, finalRuleset = TRUE, finalCV = TRUE, 
+        finalCVSetSize = 1000, seed = NA, threadsNumber = 5)
+    result.data <- result$RI
+    var.name <- names(result$data)[-length(names(result$data))]
+    var.imp <- result.data[result.data$attribute %in% c(var.name), 
+        c("attribute", "RI")]
+    colnames(var.imp)[1] <- "name"
+    var.imp$name <- old.names[c(var.imp$name)]
+    return(var.imp)
+}

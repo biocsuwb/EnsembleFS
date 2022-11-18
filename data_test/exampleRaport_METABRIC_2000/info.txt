@@ -1,0 +1,3 @@
+list(methods = c("fs.utest", "fs.mrmr", "fs.mcfs", "fs.mdfs.1D", 
+"fs.mdfs.2D"), p.adjust = "fdr", level.corelation = 0.75, validation = "rsampling", 
+    gene.info = NULL, number.repeats = 10L)

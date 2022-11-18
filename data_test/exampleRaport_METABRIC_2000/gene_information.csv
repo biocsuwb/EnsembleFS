@@ -1,0 +1,47 @@
+term;source;term.ID;term.name
+RNF168;GO:BP;GO:0036351;histone H2A-K13 ubiquitination
+RNF168;GO:BP;GO:0036352;histone H2A-K15 ubiquitination
+RNF168;WP;WP:WP5119;NIPBL role in DNA damage - Cornelia de Lange syndrome
+DBT;GO:MF;GO:0031405;lipoic acid binding
+DBT;GO:MF;GO:0043754;dihydrolipoyllysine-residue (2-methylpropanoyl)transferase activity
+TPK1;GO:BP;GO:0009229;thiamine diphosphate biosynthetic process
+TPK1;GO:BP;GO:0042724;thiamine-containing compound biosynthetic process
+TPK1;GO:MF;GO:0004788;thiamine diphosphokinase activity
+TPK1;GO:MF;GO:0030975;thiamine binding
+TPK1;KEGG;KEGG:00730;Thiamine metabolism
+TPK1;WP;WP:WP4297;Thiamine metabolic pathways
+PLCH2;HPA;HPA:0450622;skin
+PLCH2;HPA;HPA:0450621;skin
+PLCH2;HPA;HPA:0450000;skin
+PLCH2;TF;TF:M11790_1;Factor: REVERB-beta
+RELN;GO:BP;GO:1902076;regulation of lateral motor column neuron migration
+RELN;GO:BP;GO:1902078;positive regulation of lateral motor column neuron migration
+RELN;GO:BP;GO:1905483;regulation of motor neuron migration
+RELN;GO:BP;GO:1905485;positive regulation of motor neuron migration
+RELN;GO:CC;GO:0110157;reelin complex
+CDKN2B;MIRNA;MIRNA:hsa-miR-4790-5p;hsa-miR-4790-5p
+ROCK1;CORUM;CORUM:7424;ISLR2-ROCK1 complex
+ROCK1;GO:CC;GO:0106003;amyloid-beta complex
+ROCK1;MIRNA;MIRNA:hsa-miR-1280;hsa-miR-1280
+FHOD3;HP;HP:0031992;Apical hypertrophic cardiomyopathy
+FHOD3;HP;HP:4000001;Abnormal cardiac magnetic resonance imaging finding
+FHOD3;HP;HP:4000004;Myocardial late gadolinium enhancement
+FHOD3;TF;TF:M12407_1;Factor: PLAGL2
+ERBB2;CORUM;CORUM:6506;ERBB2-SPG1 complex
+ERBB2;CORUM;CORUM:2528;ERBB2-MEMO-SHC complex
+ERBB2;CORUM;CORUM:7351;GDF15-ERBB2 complex
+ERBB2;GO:CC;GO:0038143;ERBB3:ERBB2 complex
+ERBB2;MIRNA;MIRNA:hsa-miR-4790-5p;hsa-miR-4790-5p
+ERBB2;REAC;REAC:R-HSA-9665233;Resistance of ERBB2 KD mutants to trastuzumab
+ERBB2;REAC;REAC:R-HSA-9665245;Resistance of ERBB2 KD mutants to tesevatinib
+ERBB2;REAC;REAC:R-HSA-9665244;Resistance of ERBB2 KD mutants to sapitinib
+ERBB2;REAC;REAC:R-HSA-9665247;Resistance of ERBB2 KD mutants to osimertinib
+ERBB2;REAC;REAC:R-HSA-9665246;Resistance of ERBB2 KD mutants to neratinib
+ERBB2;REAC;REAC:R-HSA-9665251;Resistance of ERBB2 KD mutants to lapatinib
+ERBB2;REAC;REAC:R-HSA-9665250;Resistance of ERBB2 KD mutants to AEE788
+ERBB2;REAC;REAC:R-HSA-1251932;PLCG1 events in ERBB2 signaling
+ERBB2;REAC;REAC:R-HSA-1306955;GRB7 events in ERBB2 signaling
+ERBB2;REAC;REAC:R-HSA-9652282;Drug-mediated inhibition of ERBB2 signaling
+ERBB2;REAC;REAC:R-HSA-9665737;Drug resistance in ERBB2 TMD/JMD mutants
+ERBB2;REAC;REAC:R-HSA-9665230;Drug resistance in ERBB2 KD mutants
+ERBB2;REAC;REAC:R-HSA-9665249;Resistance of ERBB2 KD mutants to afatinib
