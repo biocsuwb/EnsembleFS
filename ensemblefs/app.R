@@ -27,44 +27,49 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                               h1(strong('Welcome to  EnsembleFS ')),
                                               hr(),
                                               div(
-                                                h4("EnsembleFS is tool that allows the user to: "),
-                                                h4('- filter the most informative features (biomarkers) by using ensemble feature selection approach from molecular data generated from high-throughput molecular 
+                                                h4("EnsembleFS is a tool that allows the user to: "),
+                                                h4('- filter the most informative features (biomarkers) using the individual and ensemble feature selection techniques from molecular data generated from high-throughput  
                                    biology experiments;'),
+                                                h4('- build predictive models using the Random Forest algorithm;'),
                                                 h4('- establish the selected parameters for predictive models, such as the number of top N informative features;'),
-                                                h4('- remove redundant features by building a the Spearman correlation matrix that identifies highly correlated features;'),
+                                                h4('- remove redundant features by building the Spearman correlation matrix that identifies highly correlated features;'),
                                                 h4('- evaluate the stability of feature subsets and performance of predictive models;'),
+                                                h4('- compare the predictive performance of models and the stability of selected feature sets for selected FS algorithms;'),
+                                                h4('- product plots to visualize the model results;'),
+                                                h4('- create detailed raport with feature selection and modeling results;'),
                                                 h4('- find information about selected biomarkers (gene ontology, pathways, tissue specificity, miRNA targets, regulatory motif, protein complexes, disease phenotypes) 
                                    in several biological databases.'),
-                                                h4('It can be applied to two-class problems. EnsembleFS is based on several filter feature selection algorithms, such as the test Manna-Whitneya, 
-                                   the Monte Carlo Feature Selection (MCFS), the MultiDimensional Feature Selection (MDFS), and the Minimum Redundancy Maximum Relevance (MRMR) for discovering the most important biomarkers and used the machine learning algorithms to evaluate the quality of feature sets. Predictive models are built using the Random Forest algorithm.'),
+                                                h4('It can be applied to two-class problems. EnsembleFS is based on several feature selection algorithms, such as the test Manna-Whitney, 
+                                   the Monte Carlo Feature Selection (MCFS), the MultiDimensional Feature Selection (MDFS), and the Minimum Redundancy Maximum Relevance (MRMR) for discovering the most important biomarkers and used the machine learning algorithms to evaluate the quality of feature sets.'),
                                                 h4('The information about each of the biomarkers is extracted from diverse biological databases, namely the Gene Ontology, the Kyoto Encyclopedia of Genes and Genomes, 
                                    the Reactome, the WikiPathways, the Transfac, the miRNA targets, the Human Protein Atlas, the CORUM, and the Human Phenotype Ontology.'),
-                                                h4(strong('For details on feature selection and classification algorithms, please refer to the Help -> Terminology')),
+                                                h4(strong('For details on feature selection and classification algorithms, please refer to the Help -> Terminology.')),
+
                                                 hr(),
-                                                h4('The proposed tool accept molecular data includes different types of gene identifiers, such as Ensembl, NCBI Entrez gene ID, Refseq, Illumina, and Uniprot.'),
-                                                h4('Computation time does not scale with the type of molecular data. Execution time of the task strong depends on the size of the dataset, the number of training iterations, as well as the type and number of feature filters. For example, the processing time is around 29 min for sample size 574, and 2000  features (model with default parameters).'),
-                                                h4(strong('Note: a maximum input file size is limited to 30 MB.')),
-                                                h1(strong('Overview')),
+                                                h4('The proposed tool accepts molecular data that includes different gene identifiers, such as Ensembl, NCBI Entrez gene ID, Refseq, Illumina, and Uniprot.'),
+                                                h4('Computation time does not scale with the type of molecular data. The execution time of the task strongly depends on the size of the dataset, the number of training iterations, as well as the type and number of feature filters. For example, the processing time is around 29 min for sample size 574 and 2000  features (model with default parameters).'),
+                                                
+                                                uiOutput("url.EnsembleFS"),                                                
                                                 hr(),
                                                 img(src="Overview_func.png", align = "center",height='1500px',width='1200px'),
-                                                h4('Figure 1. Flow chart for EsembleFS: A) the feature selection process and model evaluation process, B) a scheme of ensemble-based feature selection method,
-                                   C) a scheme for biological information collection and integration about biomarkers. For details on used notation, please refer to the Help -> Terminology'),
+                                                h4('Figure 1. Flow chart for the EsembleFS: A) the feature selection process and model evaluation process, B) a scheme of ensemble-based feature selection method,
+                                   C) a scheme for biological information collection and integration about biomarkers. For details on used notation, please refer to the Help -> Terminology.'),
                                                 
-                                                h3(strong('The feature selection process and the model validation')),
+                                                h3(strong('The feature selection process and model validation')),
                                                 hr(),
                                                 h4('The FS process is based on the combination of the heterogeneous ensemble approach for feature selection and machine learning. As shown in Figure 1A, 
                                    the basic modeling procedure involves the following steps:'),
-                                                h4('(1) split randomly the samples into training and test set;'),
+                                                h4('(1) split the samples randomly into the training and test set;'),
                                                 h4('(2) select and rank informative features using the feature filter on training set;'),
                                                 h4('(3) remove correlated features with the training set;'),
-                                                h4('(4) build model on the training set;'),
-                                                h4('(5) estimate the stability of a FS algorithm and quality of the predictive model on test set.'),
-                                                h4('To evaluate quality of the feature set, EnsambleFS applies the supervised machine mearning procedure, namely, the predictive models are built with top N features
-                                using the random forest algorithm and the stratified 3-fold cross-validation procedure or the 0.3 random sampling is used to evaluate classification models. 
-                                The mean values of ACC, AUC, MCC, and ASM metric are calculated for each of FS methods. To minimize the collinearity of features, the correlated variables are removed 
-                                using the correlation coefficient method from the train dataset. The most informative features are identified as those that appear most consistently in top N features 
-                                selected by FS method in n resampling operations. Herein, the best feature set is selected by the majority voting method (ie. morethan half) for each basic feature 
-                                selector. As shown in Figure 1B, the total feature set for further biological analysis included all the best features or overlapping best features selected by basic filters.'),
+                                                h4('(4) build a model on the training set;'),
+                                                h4('(5) estimate the stability of FS algorithm and the quality of predictive model on test set.'),
+                                                h4('To evaluate quality of the feature set, EnsambleFS applies the supervised machine learning procedure, namely, the predictive models are built with top N features
+                                using the random forest algorithm and the stratified 3-fold cross-validation procedure, or the 0.3 random sampling is used to evaluate classification models. 
+                                The mean values of ACC, AUC, MCC, and ASM metrics are calculated for each of FS methods. To minimize the collinearity of features, the correlated variables are removed 
+                                using the correlation coefficient method from the training dataset. The most informative features are identified as those that appear most consistently in top N features 
+                                selected by FS method in n resampling operations. Herein, the best feature set is selected by the majority voting method (i.e. more than half) for each basic feature 
+                                selector. As shown in Figure 1B, the full feature set for further biological analysis included all the best features or overlapping best features selected by basic filters.'),
                                                 hr(),
                                                 h4('For more details on the used procedure for building predictive models, please refer to [1]'),
                                                 h5('[1] A. Polewko-Klim, W.R. Rudnicki. Analysis of Ensemble Feature Selection for Correlated High-Dimensional RNA-Seq Cancer Data. In: Krzhizhanovskaya V. et al. (eds) Comp.Scien. ICCS 2020. Lecture Notes in Computer Science 12139 (2020), 525-538, Springer, Cham.'),
@@ -72,8 +77,8 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                 
                                                 h3(strong('The biological gene information collection')),
                                                 hr(),
-                                                h4('EnsembleFS allows the users to access to fundamental biological information for finally selected biomakers from several databases. 
-                                As shown in Figure 1C, user research analysis may include intersection or union of the most informative biomarker sets with up to five FS methods.
+                                                h4('EnsembleFS allows users to access essential biological information for finally selected biomarkers from several databases. 
+                                As shown in Figure 1C, user research analysis may include the intersection or union of the most informative biomarker sets with up to five FS methods.
                                 For each biomarker, the biological information is obtained from the following databases: the Gene Ontology (the molecular function, the cellular component, 
                                 and the biological process), the Kyoto Encyclopedia of Genes and Genomes (the pathways), the Reactome (the pathways), 
                                 and WikiPathways (the pathways), Transfac (the regulatory motif), miRTarBase (the miRNA targets), 
@@ -85,11 +90,11 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                 hr(),
                                                 img(src="Workflow.png", align = "center",height='1000px',width='1200px'),
                                                 h4('Figure 2. Main functionality modules of EnsembleFS: A) Feature Selection tab, B) Gene information tab. The cuboids represent the interaction between EnsembleFS and the user, and the ellipses represent EnsembleFS processes.'),
-                                                
                                                 h1(strong('Tutorial')),
                                                 hr(),
                                                 h4(strong('For examples on how to use EnsembleFS, please refer to the Help -> Tutorial')),
                                                 
+                                                hr(),
                                                 h3(strong('Cite as')),
                                                 hr(),
                                                 h4('When using this web server, please cite the following references:'),
@@ -355,10 +360,9 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                h1(strong('Example of use case')),
                                                h4(uiOutput("tcga.set")),
                                                h4('The preprocessing of data involved standard steps for RNA-Seq data. The log2 transformation was performed. Features with zero and near-zero (1%) variance across patients were removed. '), 
-                                               h4('After the preprocessing procedure the primary dataset contains 574 samples (59 normal and 515 tumor) described with 20172 differentially expressed genes (DEGs). This dataset includes '),
-                                               h4('highly correlated features and the number of cancer samples is roughly ten times more than normal samples. For testing purposes, 
-                                                  the number of probes was limited to 500 DEGs with the '),
-                                               h4('highest difference in the gene expression level between tumor and normal tissues.'),
+                                               h4('After the preprocessing procedure, the primary dataset contains 574 samples (59 normal and 515 tumors) described with 20172 differentially expressed genes (DEGs).'),
+                                               h4('This dataset includes highly correlated features, and the number of cancer samples is roughly ten times more than normal samples.'), 
+                                               h4('For testing purposes, the number of samples was limited to 500 DEGs, with the highest difference in the gene expression level between tumor and normal tissues.'),
                                                uiOutput("data.sample.set.1"),
                                                hr(),
                                                h5('[1] E. Collisson, J. Campbell, A. Brooks, and et al. Comprehensive molecular profiling of lung adenocarcinoma. Nature, 511 (2014), 543-550.'),
@@ -383,12 +387,12 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                
                                                hr(),
                                                h3(strong('GENE INFORMATION tab')),
-                                               h4('--- Number of relevant biomarkers, Top N features with FS filter: 50'),
+                                               h4('--- Number of relevant biomarkers, top N features with FS filter: 50'),
                                                h4('--- Combination of a set of biomarkers: union'),
                                                h4('--- Data bases: all'),
                                                hr(),
                                                h3(strong('Note:')),
-                                               h4('Execution time for the feature selection algorithm, the random forest classification, and the biological information searching in databases for this dataset is around 30 min.'), 
+                                               h4('The execution time for the feature selection algorithm, the random forest classification, and the biological information searching in databases for this dataset is around 30 min.'), 
                                                
                                                hr(),
                                                h1(strong("Results")),
@@ -413,16 +417,16 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                h3(strong('4. Model comparison plots (PLOTS sub-tab)')),
                                                h4('Optimization and evaluation of the feature selection process are important for choosing the final feature set. To evaluate the quality of the models, we can use three metrics: ACC, AUC, and MCC.'),
                                                h4('While to evaluate the stability of selected feature sets, we use the ASM metric. To optimize our ML models, we compare ACC(N), AUC(N), MCC(N), and ASM(N) curves and identify the optimal number of variables (N) for the RF classifier.'),
-                                               h4('Also, we can easily compare the predictive performance of models and the stability of selected feature sets for individual FS algorithms, by using interactive plots.'),
+                                               h4('Also, we can easily compare the predictive performance of models and the stability of selected feature sets for individual FS algorithms by using interactive plots.'),
                                                img(src="Fig_plots_ACC_AUC_MCC_ASM.png", align = "center",height='1100px',width='1500px'),
                                                h4('Fig 1. The average values for ACC, AUC, and MCC vs N top features for all features filters. ASM similarity measure between 10 feature subsets vs N top features.'),
                                                hr(),
                                                h4('For example, the following analyses we can perform for each individual FS filter:'),
-                                               h4(' - How many uncorrelated variables should be included in the model to obtain the best classification with Random Forest ?'),
-                                               h4(' - Which feature selection algorithm returns the best sets of variables ?'),
-                                               h4('- How stable is the stability measure for top-N feature subsets ?'),
-                                               h4('- How effective is the predictive model for top-N feature subsets ?'),
-                                               h4('- How stable are model performance metrics for top-N feature subsets ?'),                                               
+                                               h4(' - How many uncorrelated variables should be included in the model to obtain the best classification with Random Forest?'),
+                                               h4(' - Which feature selection algorithm returns the best sets of variables?'),
+                                               h4('- How stable is the stability measure for top N feature subsets?'),
+                                               h4('- How effective is the predictive model for top N feature subsets?'),
+                                               h4('- How stable are model performance metrics for top N feature subsets?'),                                               
                                                hr(), 
                                                h4('In the case of TCGA-LUAD data, due to the high performance of the prediction models (ACC were higher than 98.9%, and MCC were higher than 95.1% for all FS methods), the top 50 features from each FS algorithm were used for further analysis.'),
                                                hr(), 
@@ -431,10 +435,10 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                h4('Fig 2. Left panel: the number of the most relevant biomarkers with all feature selection methods. Right panel: the number of annotated biomarkers in the biological databases'),
                                                hr(),
                                                h3(strong('6. Biological gene information collection (GENE INFORMATION tab)')),
-                                               h4('The information assigned to gene is presented in tabular format, wherein the type of display information can be set. For each biomarker, the following biological information is obtained from databases: the molecular function, the cellular component, '),
-                                               h4('and the biological process (the Gene Ontology database), the pathways (the Kyoto Encyclopedia of Genes and Genomes, the Reactome, and WikiPathways databases), and the human disease phenotypes (the Human Phenotype Ontology database). '),
+                                               h4('The information assigned to the gene is presented in tabular format, wherein the type of display information can be set. For each biomarker, the following biological information is obtained from databases: the molecular function, the cellular component, '),
+                                               h4('and the biological process (the Gene Ontology database), the pathways (the Kyoto Encyclopedia of Genes and Genomes, the Reactome, and WikiPathways databases), and the human disease phenotypes (the Human Phenotype Ontology database), '),
                                                h4('the regulatory motif (the Transfac database), the miRNA targets (the miRTarBase database), the tissue specificity (the Human Protein Atlas database), the protein complexes (the CORUM database), and WikiPathways database  '),
-                                               h4('for selected biomarker, respectively. The Table 4-7 contain an example of database information from selected databases.'),
+                                               h4('for selected biomarker, respectively. Tables 4-7 contain an example of database information from selected databases.'),
                                                img(src="Fig_gene_information_table1.png", align = "center",height='600px',width='1200px'),
                                                h4('Table 4. Molecular function annotation from the Gene Ontology database.'),
                                                img(src="Fig_gene_information_table2.png", align = "center",height='600px',width='1200px'),
@@ -501,6 +505,7 @@ server <- function(session, input, output){
   url_app = a("here", href = "https://github.com/biocsuwb/EnsembleFS")
   url_package = a("here", href = "https://github.com/biocsuwb/EnsembleFS-package")
   email= a("here", href = 'http://matinf.uwb.edu.pl/pl/wydzial/kadra/pracownikii.php?cID=180')
+  url.EnsembleFS = a('https://uco.uwb.edu.pl/apps/EnsembleFS', href = "https://uco.uwb.edu.pl/apps/EnsembleFS")
   url.art.EnsembleFS = a('10.1007/978-3-030-50420-5_39', href = "https://link.springer.com/chapter/10.1007%2F978-3-030-50420-5_39")
   url.tcga = a('https://www.cancer.gov/tcga', href = "https://www.cancer.gov/tcga")
   url.art.MDFS = a('10.1016/j.ins.2020.03.024', href = "https://www.sciencedirect.com/science/article/abs/pii/S0020025520302048?via%3Dihub")
@@ -537,16 +542,13 @@ server <- function(session, input, output){
   })
   
   output$home.url_app <- renderUI({
-    tagList(h4("The source code EnsembleFS is available here ", url_app))
+    tagList(h4("The source code EnsembleFS web app is available ", url_app))
   })
   
   output$home.url_package <- renderUI({
     tagList(h4("The R package EnsembleFS is available ", url_package))
   })
   
-  output$url.article = renderUI({
-    tagList(h4("DOI:", url.art))
-  })
   
   output$url.MCFS = renderUI({
     tagList("DOI:", url.art.MCFS)
@@ -572,6 +574,10 @@ server <- function(session, input, output){
     tagList("DOI:", url.art.EnsembleFS)
   })
   
+  output$url.EnsembleFS = renderUI({
+    tagList("Note: the EnsembleFS web server accepts the input data limited to 5000 instances (30 MB limit on the total amount of data). EnsembleFS web server demo:", url.EnsembleFS)
+  })
+
   output$home.url <- renderUI({
     tagList("The R package of EnsembleFS is available ", url_package)
   })
