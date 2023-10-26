@@ -2,7 +2,7 @@
 
 ## Welcome to EnsembleFS
 **EnsembleFS is a tool that allows the user to:**
-* filter the most informative biomarkers from molecular data generated from high-throughput microarray experiments that could be a new diagnostic/prognostic markers or therapeutic targets;
+* filter the most informative biomarkers from molecular data generated from high-throughput experiments that could be a new diagnostic/prognostic markers or therapeutic targets;
 * establish the selected parameters for predictive models, such as the best number of most informative variables/biomarkers;
 * remove redundant and correlated features from the obtained feature subsets;
 * evaluate the quality of the feature set by using the random forest classification algorithm and machine learning validation techniques;
