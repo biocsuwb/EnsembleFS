@@ -108,8 +108,8 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                 hr(), 
                                                 uiOutput("home.email"),
                                                 hr(), 
-                                                h4('Developed by Pavel Hrablis & Aneta Polewko-Klim'),
-                                                h4('Institute of Computer Science, University of Bialystok, Bialystok, Poland')
+                                                h4('Developed by Pawel Grablis & Aneta Polewko-Klim'),
+                                                h4('Faculty of Computer Science, University of Bialystok, Bialystok, Poland')
                                               ),
                                     )),
                            tabPanel(h4('FEATURE SELECTION'),icon = icon("hand-pointer", "fa-2x"),
