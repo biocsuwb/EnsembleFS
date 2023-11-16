@@ -108,7 +108,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                 hr(), 
                                                 uiOutput("home.email"),
                                                 hr(), 
-                                                h4('Developed by Pawel Grablis & Aneta Polewko-Klim'),
+                                                h4('Developed by Paweł Grablis & Aneta Polewko-Klim'),
                                                 h4('Faculty of Computer Science, University of Bialystok, Bialystok, Poland')
                                               ),
                                     )),
