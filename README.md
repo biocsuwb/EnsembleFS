@@ -20,7 +20,7 @@ The information about each of the biomarkers was obtained from the biological da
 **Software project documentation**
 
 A software user manual: 
-[UserDocumentationEnsembleFS.pdf](https://github.com/biocsuwb/EnsembleFS/blob/main/User%20Documentation%20EnsembleFS.pdf))
+[UserDocumentationEnsembleFS.pdf](https://github.com/biocsuwb/EnsembleFS/blob/main/User%20Documentation%20EnsembleFS.pdf)
 
 
 ![Fig.1](https://github.com/biocsuwb/Images/blob/main/Fig1.png?raw=true)
