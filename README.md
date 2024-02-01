@@ -1,4 +1,4 @@
-# EnsembleFS: ensemble feature selection methods for analysis of molecular data
+# EnsembleFS web-based tool for a filter ensemble feature selection of molecular omics data
 
 ## Welcome to EnsembleFS
 **EnsembleFS is a tool that allows the user to:**
@@ -16,6 +16,11 @@ The information about each of the biomarkers was obtained from the biological da
 
 **Tutorial**
 [Watch the video](https://www.youtube.com/embed/ENf3LEMb56E)
+
+**Software project documentation**
+A software user manual
+![A software user manual](https://github.com/biocsuwb/Images/blob/main/Fig1.png?raw=true)
+
 
 ![Fig.1](https://github.com/biocsuwb/Images/blob/main/Fig1.png?raw=true)
 Fig.1 Main functionality modules of \textit{EnsembleFS} web app: A) Feature Selection tab, B) Gene information tab. The cuboids represent the interaction between \textit{EnsembleFS} and the user, and the octagons represent \textit{EnsembleFS} processes. Databases: the Gene Ontology (GO), the Kyoto Encyclopedia of Genes and Genomes (KEGG), the Reactome (REACT), the WikiPathways (WP), the Transfac (TF), the miRTarBase (MIRNA), the Human Protein Atlas (HPA), and the Human Phenotype Ontology (HP).
