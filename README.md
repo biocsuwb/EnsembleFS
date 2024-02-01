@@ -22,9 +22,11 @@ The information about each of the biomarkers was obtained from the biological da
 A software user manual: 
 [UserDocumentationEnsembleFS.pdf](https://github.com/biocsuwb/EnsembleFS/blob/main/User%20Documentation%20EnsembleFS.pdf)
 
+**Main functionality modules of \textit{EnsembleFS} web app: A) Feature Selection tab, B) Gene information tab**
 
 ![Fig.1](https://github.com/biocsuwb/Images/blob/main/S2.jpg?raw=true)
-Fig.1 Main functionality modules of \textit{EnsembleFS} web app: A) Feature Selection tab, B) Gene information tab. The cuboids represent the interaction between \textit{EnsembleFS} and the user, and the octagons represent \textit{EnsembleFS} processes. Databases: the Gene Ontology (GO), the Kyoto Encyclopedia of Genes and Genomes (KEGG), the Reactome (REACT), the WikiPathways (WP), the Transfac (TF), the miRTarBase (MIRNA), the Human Protein Atlas (HPA), and the Human Phenotype Ontology (HP).
+Fig.1 Main functionality of the Feature Selection module of EnsembleFS web app.
 
 ![Fig.2](https://github.com/biocsuwb/Images/blob/main/S3.jpg?raw=true)
-Fig.1 Main functionality modules of \textit{EnsembleFS} web app: A) Feature Selection tab, B) Gene information tab. The cuboids represent the interaction between \textit{EnsembleFS} and the user, and the octagons represent \textit{EnsembleFS} processes. Databases: the Gene Ontology (GO), the Kyoto Encyclopedia of Genes and Genomes (KEGG), the Reactome (REACT), the WikiPathways (WP), the Transfac (TF), the miRTarBase (MIRNA), the Human Protein Atlas (HPA), and the Human Phenotype Ontology (HP).
+Fig.1 Main functionality of the Gene Information module of EnsembleFS web app.
+
