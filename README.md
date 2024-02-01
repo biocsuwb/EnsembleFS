@@ -18,9 +18,11 @@ The information about each of the biomarkers was obtained from the biological da
 [Watch the video](https://www.youtube.com/embed/ENf3LEMb56E)
 
 **Software project documentation**
-A software user manual: 
-[User Documentation EnsembleFS.pdf](https://github.com/biocsuwb/EnsembleFS/blob/main/User%20Documentation%20EnsembleFS.pdf))
 
+A software user manual (view): 
+[User Documentation EnsembleFS.pdf](https://github.com/biocsuwb/EnsembleFS/blob/main/User%20Documentation%20EnsembleFS.pdf))
+A software user manual (download pdf file): 
+[User Documentation EnsembleFS.pdf](https://github.com/biocsuwb/EnsembleFS/blob/main/User%20Documentation%20EnsembleFS.pdf)
 
 ![Fig.1](https://github.com/biocsuwb/Images/blob/main/Fig1.png?raw=true)
 Fig.1 Main functionality modules of \textit{EnsembleFS} web app: A) Feature Selection tab, B) Gene information tab. The cuboids represent the interaction between \textit{EnsembleFS} and the user, and the octagons represent \textit{EnsembleFS} processes. Databases: the Gene Ontology (GO), the Kyoto Encyclopedia of Genes and Genomes (KEGG), the Reactome (REACT), the WikiPathways (WP), the Transfac (TF), the miRTarBase (MIRNA), the Human Protein Atlas (HPA), and the Human Phenotype Ontology (HP).
