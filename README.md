@@ -1,5 +1,5 @@
 # EnsembleFS web-based tool for a filter ensemble feature selection of molecular omics data
-** Citing EnsembleFS in publications and presentations
+** Citing EnsembleFS in publications and presentations**
 Polewko-Klim, A., Grablis, P., Rudnicki, W. (2024). EnsembleFS: an R Toolkit and a Web-Based Tool for a Filter Ensemble Feature Selection of Molecular Omics Data. In: Franco, L., de Mulatier, C., Paszynski, M., Krzhizhanovskaya, V.V., Dongarra, J.J., Sloot, P.M.A. (eds) Computational Science – ICCS 2024. ICCS 2024. Lecture Notes in Computer Science, vol 14835. Springer, Cham. https://doi.org/10.1007/978-3-031-63772-8_7
 
 
